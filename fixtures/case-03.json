@@ -1,0 +1,23 @@
+{
+  "id": "03",
+  "title": "血糖の自己測定と足の観察（架空）",
+  "subject": "利用者C",
+  "period": "2026年10月",
+  "records": [
+    { "id": "R01", "date": "2026-10-03", "staffRole": "看護師", "lines": ["朝食前の血糖値は自己測定で132と本人より。", "両足の観察で傷なし。", "インスリンは本人が自己注射している。"] },
+    { "id": "R02", "date": "2026-10-10", "staffRole": "看護師", "lines": ["朝食前の血糖値は自己測定で158と本人より。", "間食に菓子パンを食べたと本人より。", "左足の親指に小さな靴ずれあり、保護テープを貼った。"] },
+    { "id": "R03", "date": "2026-10-17", "staffRole": "看護師", "lines": ["左足の靴ずれは乾いている。", "散歩を1日20分続けていると本人より。"] },
+    { "id": "R04", "date": "2026-10-24", "staffRole": "看護師", "lines": ["朝食前の血糖値は自己測定で140と本人より。", "両足の観察で傷なし。", "インスリンの打ち忘れが週に1回あったと本人より。"] }
+  ],
+  "draft": "インスリンは本人が自己注射している。打ち忘れはなく、自己管理は良好である。左足の親指に靴ずれがあり、保護テープを貼った。靴ずれはその後乾いている。散歩を1日20分続けている。HbA1c（ヘモグロビンエーワンシー）は改善している。食事療法を守れている。",
+  "expected": [
+    { "sentenceId": "S01", "verdict": "一致", "evidenceIds": ["R01"], "evidenceQuote": "インスリンは本人が自己注射している", "reason": "記録と同じ内容。" },
+    { "sentenceId": "S02", "verdict": "反する", "evidenceIds": ["R04"], "evidenceQuote": "インスリンの打ち忘れが週に1回あったと本人より", "reason": "記録では打ち忘れがあった。" },
+    { "sentenceId": "S03", "verdict": "言い換え", "evidenceIds": ["R02"], "evidenceQuote": "左足の親指に小さな靴ずれあり、保護テープを貼った", "reason": "「小さな」が省かれている。" },
+    { "sentenceId": "S04", "verdict": "言い換え", "evidenceIds": ["R03"], "evidenceQuote": "左足の靴ずれは乾いている", "reason": "記録の内容を別の言葉にしている。" },
+    { "sentenceId": "S05", "verdict": "言い換え", "evidenceIds": ["R03"], "evidenceQuote": "散歩を1日20分続けていると本人より", "reason": "本人の話である点が省かれている。" },
+    { "sentenceId": "S06", "verdict": "根拠なし", "evidenceIds": [], "evidenceQuote": "", "reason": "HbA1cの記載が見当たらない。説明語が足されている。" },
+    { "sentenceId": "S07", "verdict": "反する", "evidenceIds": ["R02"], "evidenceQuote": "間食に菓子パンを食べたと本人より", "reason": "記録には間食の記載があり、食い違う。" }
+  ],
+  "savedJudgements": []
+}

@@ -1,0 +1,23 @@
+{
+  "id": "04",
+  "title": "在宅酸素と息切れ（架空）",
+  "subject": "利用者D",
+  "period": "2026年10月",
+  "records": [
+    { "id": "R01", "date": "2026-10-06", "staffRole": "看護師", "lines": ["在宅酸素は安静時1リットルで使用。", "SpO2は安静時95%。", "痰がらみの咳が時々あり。"] },
+    { "id": "R02", "date": "2026-10-13", "staffRole": "看護師", "lines": ["SpO2は安静時94%、歩行後89%。", "歩行後は2分休むと93%に戻った。", "酸素チューブの折れなし。"] },
+    { "id": "R03", "date": "2026-10-20", "staffRole": "看護師", "lines": ["SpO2は安静時95%。", "痰は白色で量は少ない。", "体重は前回より1キロ増えたと家族より。"] },
+    { "id": "R04", "date": "2026-10-27", "staffRole": "看護師", "lines": ["SpO2は安静時96%。", "夜は2時間おきに目が覚めると本人より。", "体温36.8度。"] }
+  ],
+  "draft": "在宅酸素は安静時1リットルで使用している。安静時のSpO2は94〜96%で推移した。歩行後にSpO2が89%まで下がり、2分の休憩で93%に戻った。痰は白色で少量である。夜間は良眠している。体重は1キロ減少した。呼吸リハビリを毎日行っている。",
+  "expected": [
+    { "sentenceId": "S01", "verdict": "一致", "evidenceIds": ["R01"], "evidenceQuote": "在宅酸素は安静時1リットルで使用", "reason": "記録と同じ内容。" },
+    { "sentenceId": "S02", "verdict": "言い換え", "evidenceIds": ["R01", "R02", "R03", "R04"], "evidenceQuote": "SpO2は安静時94%", "reason": "4回の値を範囲にまとめている。" },
+    { "sentenceId": "S03", "verdict": "言い換え", "evidenceIds": ["R02"], "evidenceQuote": "歩行後は2分休むと93%に戻った", "reason": "同じ日の2行をまとめている。" },
+    { "sentenceId": "S04", "verdict": "言い換え", "evidenceIds": ["R03"], "evidenceQuote": "痰は白色で量は少ない", "reason": "記録の内容を別の言葉にしている。" },
+    { "sentenceId": "S05", "verdict": "反する", "evidenceIds": ["R04"], "evidenceQuote": "夜は2時間おきに目が覚めると本人より", "reason": "記録では夜に何度も目が覚めている。" },
+    { "sentenceId": "S06", "verdict": "反する", "evidenceIds": ["R03"], "evidenceQuote": "体重は前回より1キロ増えたと家族より", "reason": "記録では増えている。" },
+    { "sentenceId": "S07", "verdict": "根拠なし", "evidenceIds": [], "evidenceQuote": "", "reason": "呼吸リハビリの記載が見当たらない。" }
+  ],
+  "savedJudgements": []
+}

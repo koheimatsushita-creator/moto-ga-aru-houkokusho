@@ -1,0 +1,24 @@
+{
+  "id": "02",
+  "title": "膝の痛みと歩行練習（架空）",
+  "subject": "利用者B",
+  "period": "2026年10月",
+  "records": [
+    { "id": "R01", "date": "2026-10-01", "staffRole": "理学療法士", "lines": ["屋内は手すりを使って歩行。", "立ち上がり練習を10回3セット実施。", "右膝の痛みは動き始めに強いと本人より。"] },
+    { "id": "R02", "date": "2026-10-08", "staffRole": "看護師", "lines": ["血圧142/84、本人は頭痛なしと話す。", "褥瘡なし。", "痛み止めは1日2回服用している。"] },
+    { "id": "R03", "date": "2026-10-15", "staffRole": "理学療法士", "lines": ["屋外歩行を自宅前の50メートルで実施。", "休憩1回で歩けた。", "右膝の痛みは前回と変わらず。"] },
+    { "id": "R04", "date": "2026-10-29", "staffRole": "理学療法士", "lines": ["立ち上がり練習を10回3セット実施。", "階段昇降は見守りで実施。"] }
+  ],
+  "draft": "屋内は手すりを使って歩行している。立ち上がり練習を継続して実施した。屋外では自宅前の50メートルを休憩1回で歩けた。右膝の痛みは改善傾向にある。階段昇降は自立している。血圧は安定している。痛み止めは1日2回服用している。家族の介護負担が大きい。",
+  "expected": [
+    { "sentenceId": "S01", "verdict": "一致", "evidenceIds": ["R01"], "evidenceQuote": "屋内は手すりを使って歩行", "reason": "記録と同じ内容。" },
+    { "sentenceId": "S02", "verdict": "言い換え", "evidenceIds": ["R01", "R04"], "evidenceQuote": "立ち上がり練習を10回3セット実施", "reason": "2回の記録を「継続して」とまとめている。" },
+    { "sentenceId": "S03", "verdict": "言い換え", "evidenceIds": ["R03"], "evidenceQuote": "屋外歩行を自宅前の50メートルで実施", "reason": "同じ日の2行をまとめている。" },
+    { "sentenceId": "S04", "verdict": "反する", "evidenceIds": ["R03"], "evidenceQuote": "右膝の痛みは前回と変わらず", "reason": "記録では痛みは変わっていない。" },
+    { "sentenceId": "S05", "verdict": "反する", "evidenceIds": ["R04"], "evidenceQuote": "階段昇降は見守りで実施", "reason": "記録では見守りが付いている。" },
+    { "sentenceId": "S06", "verdict": "根拠なし", "evidenceIds": [], "evidenceQuote": "", "reason": "血圧の値は1回分のみで、「安定」という記載は見当たらない。" },
+    { "sentenceId": "S07", "verdict": "一致", "evidenceIds": ["R02"], "evidenceQuote": "痛み止めは1日2回服用している", "reason": "記録と同じ内容。" },
+    { "sentenceId": "S08", "verdict": "根拠なし", "evidenceIds": [], "evidenceQuote": "", "reason": "家族の介護負担についての記載が見当たらない。" }
+  ],
+  "savedJudgements": []
+}
