@@ -20,6 +20,15 @@ export type Judgement = {
   evidenceIds: string[];
   evidenceQuote: string;
   reason: string;
+  machineNote?: string; // サーバー側の検査で直した点（引用が記録に無い、未判定 など）
+};
+
+// 検査役を回した時の条件。保存した結果と一緒に残す。
+export type JudgeRunMeta = {
+  model: string;
+  effort: string;
+  judgedAt: string; // ISO 形式の日時
+  promptNote: string; // 指示の版（言い換えの例が仮か など）
 };
 
 export type Decision = {
@@ -37,4 +46,5 @@ export type FixtureCase = {
   draft: string;
   expected: Judgement[]; // 正解の判定（人が付けた）
   savedJudgements: Judgement[]; // 検査役を実際に回した結果。回すまでは空
+  savedMeta?: JudgeRunMeta;
 };

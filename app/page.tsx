@@ -69,7 +69,7 @@ export default function Home() {
           架空の訪問記録と下書きを貼って、AIに照合させます（入力は4,000字まで、1日30回まで）。
           氏名・電話番号・住所のように見える箇所があると送信しません。
         </p>
-        <p><span className="button disabled" aria-disabled="true">準備中</span></p>
+        <p><Link href="/check" className="button">実行モードへ</Link></p>
       </section>
 
       <footer className="footer muted">
