@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { JudgementView } from "@/components/JudgementView";
+import { ReviewFlow } from "@/components/ReviewFlow";
 import { parseRecords } from "@/lib/parseRecords";
 import { findPii, piiMessage } from "@/lib/pii";
 import { splitSentences } from "@/lib/split";
@@ -65,6 +65,29 @@ export function RunMode() {
     }
   }
 
+  if (result) {
+    return (
+      <>
+        <p className="no-print">
+          <button type="button" className="button button-sub" onClick={() => setResult(null)}>貼り付けた内容に戻る（入力は残っています）</button>
+        </p>
+        <ReviewFlow
+          records={result.records}
+          sentences={result.sentences}
+          judgements={result.judgements}
+          meta={result.meta}
+          isSample={false}
+          title="実行モードで貼った内容"
+          header={
+            <p className="source-note">
+              AIの検査役（{result.meta.model}）が判定した結果です。記録に無い＝誤りではなく、確認が要るという印です。
+            </p>
+          }
+        />
+      </>
+    );
+  }
+
   return (
     <>
       <div className="notice">
@@ -97,14 +120,6 @@ export function RunMode() {
         </div>
       )}
 
-      {result && (
-        <>
-          <p className="source-note">
-            AIの検査役（{result.meta.model}）が判定した結果です。記録に無い＝誤りではなく、確認が要るという印です。
-          </p>
-          <JudgementView records={result.records} sentences={result.sentences} judgements={result.judgements} />
-        </>
-      )}
     </>
   );
 }

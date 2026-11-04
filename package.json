@@ -8,6 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "check:fixtures": "node scripts/check-fixtures.mjs",
+    "check:review": "node scripts/check-review.mjs",
     "judge:fixtures": "node scripts/judge-fixtures.mjs",
     "eval": "node scripts/eval.mjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",

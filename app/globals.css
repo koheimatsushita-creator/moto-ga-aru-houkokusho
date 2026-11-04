@@ -67,3 +67,51 @@ h2 { font-size: 1.15rem; margin: 40px 0 12px; padding-bottom: 6px; border-bottom
 .run-form button { border: 0; font: inherit; cursor: pointer; }
 .run-form button:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
 .error-box { margin: 16px 0; padding: 8px 16px; border: 1px solid var(--red); border-left-width: 4px; border-radius: 6px; background: #fdf2f1; }
+
+/* 文ごとの処理と出す */
+.howto-box { margin: 16px 0; padding: 4px 16px 8px; background: var(--card); border: 1px solid var(--line); border-radius: 6px; }
+.howto-box h2 { border: 0; margin: 10px 0 4px; font-size: 1rem; }
+.howto-box ol { margin: 0; padding-left: 1.4em; font-size: .92rem; }
+.decision { margin-top: 8px; padding: 8px 10px; border-radius: 6px; background: #f6f3ec; }
+.decision.pending-red { background: #fdf2f1; }
+.decision fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; min-width: 0; }
+.decision legend { font-size: .85rem; color: var(--muted); padding: 0; margin-bottom: 2px; }
+.choice { display: inline-flex; align-items: center; gap: 4px; font-size: .92rem; cursor: pointer; }
+.reason { display: grid; gap: 2px; margin-top: 6px; }
+.reason span { font-size: .85rem; color: var(--muted); }
+.reason input, .names input, .names select { width: 100%; min-width: 0; padding: 6px 8px; font: inherit; border: 1px solid var(--line); border-radius: 6px; background: var(--card); }
+.reason input[aria-invalid="true"] { border-color: var(--red); }
+.after { margin: 6px 0 0; font-size: .92rem; overflow-wrap: anywhere; }
+.removed { color: var(--red); }
+.final-box, .names-box { margin-top: 24px; }
+.final-text { padding: 10px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 6px; overflow-wrap: anywhere; }
+.names { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.names label { display: grid; gap: 2px; }
+.names label span { font-size: .85rem; color: var(--muted); }
+.issue-bar { position: sticky; bottom: 0; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 24px; padding: 12px 16px; background: var(--bg); border-top: 1px solid var(--line); }
+.issue-bar p { margin: 0; }
+.issue-bar button { border: 0; font: inherit; cursor: pointer; padding: 10px 32px; }
+.issue-bar button:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
+.guard { color: var(--red); font-weight: 600; }
+.button-sub { background: var(--card); color: var(--accent); border: 1px solid var(--accent) !important; }
+.issue-actions { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 16px; }
+.issue-actions button { border: 0; font: inherit; cursor: pointer; }
+.issue-actions p { margin: 0; flex-basis: 100%; }
+.record-disclaimer { padding: 8px 12px; border: 2px solid var(--fg); border-radius: 6px; font-weight: 600; }
+.record-meta { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 16px; }
+.record-meta dt { color: var(--muted); }
+.record-meta dd { margin: 0; overflow-wrap: anywhere; }
+.record-counts { border-collapse: collapse; width: 100%; max-width: 480px; }
+.record-counts th, .record-counts td { border: 1px solid var(--line); padding: 4px 8px; text-align: center; }
+.record-sentences { list-style: none; padding: 0; margin: 0; }
+.record-sentences li { padding: 8px 0; border-bottom: 1px solid var(--line); break-inside: avoid; }
+.record-sentences p { margin: 2px 0; overflow-wrap: anywhere; }
+.record-sentence-head { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+  .page { max-width: none; padding: 0; }
+  .tag { border: 1px solid #000; }
+  .tag-red, .tag-yellow { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

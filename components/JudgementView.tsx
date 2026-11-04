@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Judgement, Sentence, Verdict, VisitRecord } from "@/lib/types";
 
 const VERDICTS: Verdict[] = ["一致", "言い換え", "根拠なし", "反する"];
@@ -14,10 +15,12 @@ export function JudgementView({
   records,
   sentences,
   judgements,
+  renderExtra,
 }: {
   records: VisitRecord[];
   sentences: Sentence[];
   judgements: Judgement[];
+  renderExtra?: (s: Sentence, j: Judgement | undefined) => ReactNode; // 文の札の下に足す物（処理の選択など）
 }) {
   const counts = new Map<Verdict, number>();
   for (const s of sentences) {
@@ -61,6 +64,7 @@ export function JudgementView({
                   {j?.evidenceQuote && <p className="quote">記録：「{j.evidenceQuote}」</p>}
                   {j?.reason && <p className="muted">{j.reason}</p>}
                   {j?.machineNote && <p className="machine-note">サーバー側の検査：{j.machineNote}</p>}
+                  {renderExtra?.(s, j)}
                 </li>
               );
             })}
