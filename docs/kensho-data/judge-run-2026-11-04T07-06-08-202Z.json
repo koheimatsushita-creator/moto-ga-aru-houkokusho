@@ -1,0 +1,116 @@
+[
+  {
+    "case": "01",
+    "ok": true,
+    "agree": 7,
+    "total": 8,
+    "mismatches": [
+      {
+        "sentenceId": "S02",
+        "expected": "一致",
+        "got": "言い換え",
+        "reason": "R02の「前回より軽い」とR04の「軽度で経過」を、意味を変えずにまとめています。"
+      }
+    ],
+    "usage": {
+      "inputTokens": 2798,
+      "outputTokens": 1326,
+      "stopReason": "end_turn",
+      "seconds": 12.377
+    },
+    "wallSeconds": 13.658,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T07:05:28.465Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  },
+  {
+    "case": "02",
+    "ok": true,
+    "agree": 8,
+    "total": 8,
+    "mismatches": [],
+    "usage": {
+      "inputTokens": 2766,
+      "outputTokens": 1098,
+      "stopReason": "end_turn",
+      "seconds": 10.757
+    },
+    "wallSeconds": 10.772,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T07:05:39.246Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  },
+  {
+    "case": "03",
+    "ok": true,
+    "agree": 6,
+    "total": 7,
+    "mismatches": [
+      {
+        "sentenceId": "S03",
+        "expected": "言い換え",
+        "got": "一致",
+        "reason": "R02に左足親指の靴ずれと保護テープ貼付が記録されており、「小さな」を省いた以外は同じ内容である。"
+      }
+    ],
+    "usage": {
+      "inputTokens": 2779,
+      "outputTokens": 1283,
+      "stopReason": "end_turn",
+      "seconds": 12.179
+    },
+    "wallSeconds": 12.197,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T07:05:51.442Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  },
+  {
+    "case": "04",
+    "ok": true,
+    "agree": 7,
+    "total": 7,
+    "mismatches": [],
+    "usage": {
+      "inputTokens": 2754,
+      "outputTokens": 706,
+      "stopReason": "end_turn",
+      "seconds": 6.345
+    },
+    "wallSeconds": 6.359,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T07:05:57.807Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  },
+  {
+    "case": "05",
+    "ok": true,
+    "agree": 8,
+    "total": 8,
+    "mismatches": [],
+    "usage": {
+      "inputTokens": 2745,
+      "outputTokens": 1172,
+      "stopReason": "end_turn",
+      "seconds": 10.377
+    },
+    "wallSeconds": 10.392,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T07:06:08.194Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  }
+]

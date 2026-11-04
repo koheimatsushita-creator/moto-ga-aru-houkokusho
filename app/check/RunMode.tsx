@@ -53,7 +53,7 @@ export function RunMode() {
       if (!res.ok) {
         setError({
           message: body.message ?? "照合できませんでした。入力を短くするか、見本モードをお試しください。回数には数えません。",
-          toSample: body.code === "no_key" || body.code === "rate_limited" || body.code === "judge_failed",
+          toSample: body.code === "no_key" || body.code === "rate_limited_daily" || body.code === "judge_failed",
         });
         return;
       }

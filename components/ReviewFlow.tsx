@@ -225,7 +225,10 @@ function IssueRecord({
                 <span>根拠の記録番号：{j.evidenceIds.length ? j.evidenceIds.join("・") : "なし"}</span>
               </p>
               <p>文：{s.text}</p>
-              <p>処理：{needsDecision(j.verdict) ? (d ? ACTION_LABEL[d.action] : "未処理") : "処理なし（一致）"}</p>
+              <p>
+                処理：{needsDecision(j.verdict) ? (d ? ACTION_LABEL[d.action] : "未処理") : "処理なし（一致）"}
+                {d?.action === "戻す" && `（戻した後の文：「${processedText(s, j, d)}」）`}
+              </p>
               {d?.action === "残す" && <p>理由：{d.reason}</p>}
             </li>
           );

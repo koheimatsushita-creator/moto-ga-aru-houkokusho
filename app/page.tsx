@@ -20,7 +20,7 @@ export default function Home() {
           <li><strong>診断や治療の助言はしません。</strong></li>
           <li><strong>記録に無い＝誤りではなく、確認が要るという印です。</strong>判定は人が画面で直せます。</li>
           <li>入力した内容は保存しません。画面を閉じると消えます。</li>
-          <li>実行モードは1日30回までです。上限に達しても見本モードは使えます。</li>
+          <li>実行モードは全体で1日30回まで、同じ接続元からは1分に3回までです。上限に達しても見本モードは使えます。</li>
         </ul>
       </section>
 
@@ -66,7 +66,7 @@ export default function Home() {
       <section aria-labelledby="run-title">
         <h2 id="run-title">実行モード</h2>
         <p className="muted">
-          架空の訪問記録と下書きを貼って、AIに照合させます（入力は4,000字まで、1日30回まで）。
+          架空の訪問記録と下書きを貼って、AIに照合させます（入力は4,000字まで、全体で1日30回まで、同じ接続元からは1分に3回まで）。
           氏名・電話番号・住所のように見える箇所があると送信しません。
         </p>
         <p><Link href="/check" className="button">実行モードへ</Link></p>

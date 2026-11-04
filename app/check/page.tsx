@@ -18,7 +18,7 @@ export default async function CheckPage({
         <p className="no-print"><Link href="/">← 入口へ戻る</Link></p>
         <h1 className="no-print">照合（実行モード）</h1>
         <p className="muted no-print">
-          架空の訪問記録と下書きを貼ると、AIの検査役が文ごとに判定します。入力は合わせて4,000字まで、1日30回までです。
+          架空の訪問記録と下書きを貼ると、AIの検査役が文ごとに判定します。入力は合わせて4,000字まで、全体で1日30回まで、同じ接続元からは1分に3回までです。
         </p>
         <RunMode />
       </main>

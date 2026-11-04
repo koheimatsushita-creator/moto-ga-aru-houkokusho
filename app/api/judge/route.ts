@@ -2,6 +2,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { findPii, piiMessage } from "@/lib/pii";
 import { JudgeFailure, runJudge } from "@/lib/judge/run";
 import { judgeRequestSchema } from "@/lib/judge/schema";
+import { checkLimits, countSuccess, type CountStore, type RateLimiter } from "@/lib/limits";
 
 const MAX_CHARS = 4000;
 const FAILURE = "照合できませんでした。入力を短くするか、見本モードをお試しください。回数には数えません。";
@@ -31,7 +32,8 @@ export async function POST(request: Request) {
   }
 
   const { env } = await getCloudflareContext({ async: true });
-  const apiKey = (env as { ANTHROPIC_API_KEY?: string }).ANTHROPIC_API_KEY;
+  const bindings = env as { ANTHROPIC_API_KEY?: string; JUDGE_RATE_LIMITER?: RateLimiter; JUDGE_COUNTS?: CountStore };
+  const apiKey = bindings.ANTHROPIC_API_KEY;
   if (!apiKey) {
     return reply(503, {
       code: "no_key",
@@ -39,8 +41,18 @@ export async function POST(request: Request) {
     });
   }
 
+  // 回数の上限は公開した物（本番の書き出し）にだけ掛ける。手元の npm run dev では掛けない（見本の判定の保存や揺れの測定で続けて呼ぶため）
+  const limited = process.env.NODE_ENV === "production";
+  const limiter = limited ? bindings.JUDGE_RATE_LIMITER : undefined;
+  const store = limited ? bindings.JUDGE_COUNTS : undefined;
+  const now = new Date();
+  const ip = request.headers.get("cf-connecting-ip") ?? request.headers.get("x-forwarded-for")?.split(",")[0].trim() ?? "local";
+  const limit = await checkLimits({ ip, now, limiter, store });
+  if (!limit.ok) return reply(429, { code: limit.code, message: limit.message });
+
   try {
     const result = await runJudge(apiKey, records, draft);
+    await countSuccess({ now, store });
     return reply(200, result);
   } catch (error) {
     const detail = error instanceof JudgeFailure ? error.message : "予期しないエラー";
