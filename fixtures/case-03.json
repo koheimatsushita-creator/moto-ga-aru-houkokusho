@@ -100,12 +100,10 @@
     },
     {
       "sentenceId": "S07",
-      "verdict": "反する",
-      "evidenceIds": [
-        "R02"
-      ],
-      "evidenceQuote": "間食に菓子パンを食べたと本人より",
-      "reason": "記録には間食の記載があり、食い違う。"
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "記録に食事療法の指示や遵守の記載がない。間食の記載だけでは、はっきり逆とは言えない。"
     }
   ],
   "savedJudgements": [

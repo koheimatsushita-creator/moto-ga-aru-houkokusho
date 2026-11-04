@@ -94,10 +94,12 @@
     },
     {
       "sentenceId": "S06",
-      "verdict": "根拠なし",
-      "evidenceIds": [],
-      "evidenceQuote": "",
-      "reason": "ADLや自立についての記載が見当たらない。説明語が足されている。"
+      "verdict": "反する",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "入浴介助を実施",
+      "reason": "記録には入浴介助の実施があり、自立とは食い違う。"
     },
     {
       "sentenceId": "S07",
