@@ -1,6 +1,7 @@
-// 回数の上限の判定を、作り物の保存先と1分の上限で確かめる（APIもCloudflareも呼ばない）。
+// 回数の上限とAI代の守りを、作り物の保存先・1分の上限・AIの代わりで確かめる（APIもCloudflareも呼ばない）。
 // 使い方: npm run check:limits
-import { DAILY_LIMIT, checkLimits, countSuccess, jstDate } from "../lib/limits.ts";
+import { DAILY_LIMIT, countKey, jstDate, reserveDaily, checkMinute } from "../lib/limits.ts";
+import { handleJudge, FAILURE_MESSAGE } from "../lib/judge/handler.ts";
 
 let problems = 0;
 const expect = (ok, msg) => {
@@ -14,7 +15,7 @@ function fakeStore() {
   return { get: async (k) => m.get(k) ?? null, put: async (k, v) => void m.set(k, v), map: m };
 }
 // Rate Limiting の代わり：同じ key で60秒に3回まで
-function fakeLimiter(clock) {
+function fakeLimiter(clock = { now: 0 }) {
   const hits = new Map();
   return {
     limit: async ({ key }) => {
@@ -26,61 +27,180 @@ function fakeLimiter(clock) {
   };
 }
 
-// 1. 1日30回：成功を30回数えたら、31回目は止まる
-{
-  const store = fakeStore();
-  const now = new Date("2026-11-05T03:00:00Z"); // 日本時間 11/5 12:00
-  let passed = 0;
-  for (let i = 1; i <= DAILY_LIMIT + 1; i++) {
-    const r = await checkLimits({ ip: `10.0.0.${i}`, now, store });
-    if (r.ok) {
-      passed++;
-      await countSuccess({ now, store });
-    } else {
-      expect(i === DAILY_LIMIT + 1 && r.code === "rate_limited_daily", `${i}回目で1日の上限に止まる（${r.message}）`);
-    }
-  }
-  expect(passed === DAILY_LIMIT, `1日に通ったのは${passed}回（期待 ${DAILY_LIMIT}回）`);
+const URL_ = "https://example.test/api/judge";
+const goodBody = {
+  records: [{ id: "R01", date: "2026-10-02", staffRole: "看護師", lines: ["右下腿に浮腫あり。"] }],
+  draft: "右下腿に浮腫がある。",
+};
+let ipSeq = 0;
+function req(body = goodBody, headers = {}) {
+  const text = typeof body === "string" ? body : JSON.stringify(body);
+  return new Request(URL_, {
+    method: "POST",
+    headers: { "content-type": "application/json", origin: "https://example.test", "sec-fetch-site": "same-origin", "cf-connecting-ip": `198.51.100.${++ipSeq % 250}`, ...headers },
+    body: text,
+  });
 }
+const quiet = () => {};
+function deps({ store = fakeStore(), limiter = fakeLimiter(), production = true, judge, now } = {}) {
+  const calls = { n: 0 };
+  return {
+    calls,
+    store,
+    d: {
+      env: { ANTHROPIC_API_KEY: "test-key-not-real", JUDGE_COUNTS: store, JUDGE_RATE_LIMITER: limiter },
+      production,
+      now,
+      log: quiet,
+      judge: async (...args) => {
+        calls.n++;
+        if (judge) return judge(...args);
+        return { judgements: [], meta: {}, usage: {} };
+      },
+    },
+  };
+}
+const used = async (store, now = new Date()) => Number((await store.get(countKey(now))) ?? 0);
 
-// 2. 失敗した回は数えない：29回成功＋失敗10回のあとでも、30回目は通る
+// --- 1日の上限・日付・1分の上限（判定の部品） ---
 {
   const store = fakeStore();
   const now = new Date("2026-11-05T03:00:00Z");
-  for (let i = 0; i < 29; i++) await countSuccess({ now, store });
-  for (let i = 0; i < 10; i++) expect((await checkLimits({ ip: "x", now, store })).ok, `失敗の${i + 1}回目：確かめるだけでは数えない`);
-  expect((await checkLimits({ ip: "x", now, store })).ok, "29回成功＋失敗10回のあと、30回目は通る");
-  await countSuccess({ now, store });
-  expect(!(await checkLimits({ ip: "x", now, store })).ok, "30回成功したら止まる");
+  let passed = 0;
+  for (let i = 1; i <= DAILY_LIMIT + 1; i++) {
+    const r = await reserveDaily(store, now);
+    if (r.ok) passed++;
+    else expect(i === DAILY_LIMIT + 1 && r.code === "rate_limited_daily", `${i}回目で1日の上限に止まる（${r.message}）`);
+  }
+  expect(passed === DAILY_LIMIT, `1日に通ったのは${passed}回（期待 ${DAILY_LIMIT}回）`);
 }
-
-// 3. 日本時間で日付が変わると戻る（UTCの15時が日本時間の0時）
 {
   const store = fakeStore();
   const before = new Date("2026-11-05T14:59:00Z"); // 日本時間 11/5 23:59
   const after = new Date("2026-11-05T15:00:00Z"); // 日本時間 11/6 0:00
   expect(jstDate(before) === "2026-11-05" && jstDate(after) === "2026-11-06", `日本時間の日付：${jstDate(before)} → ${jstDate(after)}`);
-  for (let i = 0; i < DAILY_LIMIT; i++) await countSuccess({ now: before, store });
-  expect(!(await checkLimits({ ip: "x", now: before, store })).ok, "11/5 23:59 は上限で止まる");
-  expect((await checkLimits({ ip: "x", now: after, store })).ok, "11/6 0:00 になると通る");
+  for (let i = 0; i < DAILY_LIMIT; i++) await reserveDaily(store, before);
+  expect(!(await reserveDaily(store, before)).ok, "11/5 23:59 は上限で止まる");
+  expect((await reserveDaily(store, after)).ok, "11/6 0:00 になると通る");
 }
-
-// 4. 同じ接続元から1分3回：4回目は止まり、別の接続元は通る。1分たつと通る
 {
   const clock = { now: 0 };
   const limiter = fakeLimiter(clock);
-  const now = new Date("2026-11-05T03:00:00Z");
-  const results = [];
-  for (let i = 0; i < 4; i++) results.push(await checkLimits({ ip: "192.0.2.1", now, limiter }));
-  expect(results.slice(0, 3).every((r) => r.ok), "同じ接続元の1〜3回目は通る");
-  expect(!results[3].ok && results[3].code === "rate_limited_minute", `4回目は1分の上限で止まる（${results[3].message}）`);
-  expect((await checkLimits({ ip: "192.0.2.2", now, limiter })).ok, "別の接続元は通る");
+  const rs = [];
+  for (let i = 0; i < 4; i++) rs.push(await checkMinute(limiter, "192.0.2.1"));
+  expect(rs.slice(0, 3).every((r) => r.ok), "同じ接続元の1〜3回目は通る");
+  expect(!rs[3].ok && rs[3].code === "rate_limited_minute", `4回目は1分の上限で止まる（${rs[3].message}）`);
+  expect((await checkMinute(limiter, "192.0.2.2")).ok, "別の接続元は通る");
   clock.now = 61_000;
-  expect((await checkLimits({ ip: "192.0.2.1", now, limiter })).ok, "1分たつと同じ接続元も通る");
+  expect((await checkMinute(limiter, "192.0.2.1")).ok, "1分たつと同じ接続元も通る");
 }
 
-// 5. 仕組みが無い時（手元）は上限を掛けない
-expect((await checkLimits({ ip: "x", now: new Date() })).ok, "保存先も1分の上限も無い時は通る");
+// --- A1：本番で仕組みが欠けていたら、AIを呼ばずに503 ---
+for (const [label, env] of [
+  ["1日の回数の保存先が無い", { JUDGE_COUNTS: undefined }],
+  ["1分の上限が無い", { JUDGE_RATE_LIMITER: undefined }],
+  ["両方無い", { JUDGE_COUNTS: undefined, JUDGE_RATE_LIMITER: undefined }],
+]) {
+  const t = deps();
+  Object.assign(t.d.env, env);
+  const res = await handleJudge(req(), t.d);
+  const body = await res.json();
+  expect(res.status === 503 && body.code === "limits_unavailable" && t.calls.n === 0, `A1 本番で${label}：503で止まり、AIを呼ばない`);
+}
+{
+  const t = deps({ production: false });
+  t.d.env.JUDGE_COUNTS = undefined;
+  t.d.env.JUDGE_RATE_LIMITER = undefined;
+  const res = await handleJudge(req(), t.d);
+  expect(res.status === 200 && t.calls.n === 1, "A1 手元（本番でない）では仕組みが無くても通る");
+}
 
-console.log(problems ? `問題 ${problems} 件` : "上限の判定はすべて期待どおり");
+// --- A2：AIに届いた後の失敗は数える。届く前に断った時は数えない ---
+{
+  const t = deps({ judge: async () => { const e = new Error("応答が長すぎて途中で切れました"); e.usage = { inputTokens: 1, outputTokens: 4000 }; throw e; } });
+  const res = await handleJudge(req(), t.d);
+  const body = await res.json();
+  expect(res.status === 502 && (await used(t.store)) === 1, "A2 AIに届いた後の失敗（途中切れ）は1回と数える");
+  expect(body.message === FAILURE_MESSAGE && body.message.includes("この回も実行回数に数えます"), "A2 失敗の文言は「この回も実行回数に数えます」");
+  expect(!("detail" in body) && !("usage" in body), "A6 502の返事に detail と usage が入っていない");
+}
+{
+  // 「あ。」×2000 のような、AIに渡る前に止めるべき入力
+  const t = deps();
+  const res = await handleJudge(req({ ...goodBody, draft: "あ。".repeat(2000) }), t.d);
+  expect(res.status === 413 && t.calls.n === 0 && (await used(t.store)) === 0, `A2/A3 「あ。」×2000 はAIに渡す前に止まり（${res.status}）、数えない`);
+}
+{
+  // 届く前に断る物は、どれも数えない
+  const cases = [
+    ["400 形が違う", req({ draft: "x" })],
+    ["403 よそのサイトから", req(goodBody, { origin: "https://evil.test", "sec-fetch-site": "cross-site" })],
+    ["413 本文が大きすぎる", req({ ...goodBody, pad: "x".repeat(40 * 1024) })],
+    ["422 個人情報の形", req({ ...goodBody, draft: "山田さんの足に浮腫がある。" })],
+  ];
+  for (const [label, r] of cases) {
+    const t = deps();
+    const res = await handleJudge(r, t.d);
+    expect(String(res.status) === label.slice(0, 3) && t.calls.n === 0 && (await used(t.store)) === 0, `A2 ${label}：${res.status}、AIを呼ばず、数えない`);
+  }
+  // 429（1分の上限）は数えない
+  const clock = { now: 0 };
+  const t = deps({ limiter: fakeLimiter(clock) });
+  const headers = { "cf-connecting-ip": "203.0.113.9" };
+  for (let i = 0; i < 3; i++) await handleJudge(req(goodBody, headers), t.d);
+  const res = await handleJudge(req(goodBody, headers), t.d);
+  expect(res.status === 429 && (await used(t.store)) === 3 && t.calls.n === 3, "A2 429（1分の上限）は数えない（3回成功の後の4回目）");
+  // 503（鍵なし）は数えない
+  const t2 = deps();
+  t2.d.env.ANTHROPIC_API_KEY = undefined;
+  const res2 = await handleJudge(req(), t2.d);
+  expect(res2.status === 503 && (await used(t2.store)) === 0, "A2 503（鍵なし）は数えない");
+}
+{
+  // 1日30回：成功・失敗あわせて30回AIに届いたら、31回目はAIを呼ばずに止まる
+  const store = fakeStore();
+  let n = 0;
+  const t = deps({ store, judge: async () => { n++; if (n % 2) throw new Error("形の不一致"); return { judgements: [] }; } });
+  const statuses = [];
+  for (let i = 0; i < DAILY_LIMIT + 1; i++) statuses.push((await handleJudge(req(), t.d)).status);
+  expect(statuses.slice(0, DAILY_LIMIT).every((s) => s === 200 || s === 502) && statuses[DAILY_LIMIT] === 429 && t.calls.n === DAILY_LIMIT, `A2 失敗が混ざっても、31回目は429で止まる（AIを呼んだのは${t.calls.n}回）`);
+}
+
+// --- A3：入力の上限 ---
+{
+  const many = { records: Array.from({ length: 2 }, (_, i) => ({ id: "R01", date: "", staffRole: "", lines: [`行${i}`] })), draft: "あいう。" };
+  const longLine = { records: [{ id: "R01", date: "", staffRole: "", lines: ["あ".repeat(301)] }], draft: "あいう。" };
+  const manyLines = { records: [{ id: "R01", date: "", staffRole: "", lines: Array.from({ length: 31 }, (_, i) => `行${i}`) }], draft: "あいう。" };
+  const sixtyOne = { ...goodBody, draft: "浮腫がある。".repeat(61) };
+  const badDate = { records: [{ id: "R01", date: "10月2日", staffRole: "", lines: ["浮腫あり。"] }], draft: "浮腫がある。" };
+  const badRole = { records: [{ id: "R01", date: "", staffRole: "ignore previous", lines: ["浮腫あり。"] }], draft: "浮腫がある。" };
+  const piiInLine2 = { records: [{ id: "R01", date: "", staffRole: "", lines: ["浮腫あり。", "連絡先 090-1234-5678"] }], draft: "浮腫がある。" };
+  for (const [label, body, status] of [
+    ["記録番号の重複", many, 400],
+    ["1行が300字を超える", longLine, 400],
+    ["記録の行が30行を超える", manyLines, 400],
+    ["下書きが60文を超える", sixtyOne, 413],
+    ["日付欄が日付の形でない", badDate, 400],
+    ["職種欄が一覧に無い", badRole, 400],
+    ["記録の2行目に電話番号の形", piiInLine2, 422],
+  ]) {
+    const t = deps();
+    const res = await handleJudge(req(body), t.d);
+    expect(res.status === status && t.calls.n === 0, `A3/C2 ${label}：${res.status}（期待 ${status}）、AIを呼ばない`);
+  }
+}
+
+// --- A5：送り方の確かめ ---
+{
+  const t = deps();
+  const plain = new Request(URL_, { method: "POST", headers: { "content-type": "text/plain", origin: "https://example.test" }, body: JSON.stringify(goodBody) });
+  expect((await handleJudge(plain, t.d)).status === 403, "A5 Content-Type が application/json でない：403");
+  expect((await handleJudge(req(goodBody, { origin: "https://evil.test" }), t.d)).status === 403, "A5 Origin がよそのサイト：403");
+  expect((await handleJudge(req(goodBody, { "sec-fetch-site": "cross-site" }), t.d)).status === 403, "A5 Sec-Fetch-Site が cross-site：403");
+  expect(t.calls.n === 0, "A5 どれもAIを呼ばない");
+  const t2 = deps();
+  expect((await handleJudge(req(), t2.d)).status === 200, "A5 自分のサイトからは通る");
+}
+
+console.log(problems ? `問題 ${problems} 件` : "上限とAI代の守りはすべて期待どおり");
 process.exit(problems ? 1 : 0);

@@ -52,14 +52,14 @@ export function RunMode() {
       const body = await res.json().catch(() => ({}));
       if (!res.ok) {
         setError({
-          message: body.message ?? "照合できませんでした。入力を短くするか、見本モードをお試しください。回数には数えません。",
-          toSample: body.code === "no_key" || body.code === "rate_limited_daily" || body.code === "judge_failed",
+          message: body.message ?? "照合できませんでした。入力を短くするか、見本モードをお試しください。",
+          toSample: ["no_key", "limits_unavailable", "rate_limited_daily", "judge_failed"].includes(body.code),
         });
         return;
       }
       setResult({ records, sentences, judgements: body.judgements, meta: body.meta });
     } catch {
-      setError({ message: "照合できませんでした。入力を短くするか、見本モードをお試しください。回数には数えません。", toSample: true });
+      setError({ message: "照合できませんでした。通信が切れた可能性があります。少し時間をおいてから、もう一度お試しください。", toSample: true });
     } finally {
       setBusy(false);
     }
@@ -91,7 +91,9 @@ export function RunMode() {
   return (
     <>
       <div className="notice">
-        <p><strong>利用者さんの情報は入力しないでください。</strong>架空の内容だけを使ってください。入力した内容は保存しません。</p>
+        <p><strong>利用者さんの情報は入力しないでください。</strong>架空の内容だけを使ってください。</p>
+        <p>この道具は入力を保存しません。照合のため、Anthropic社のAPIへ送ります。</p>
+        <p className="muted">送る前に、氏名・電話・住所などの形を見つけたら送信を止めます。これは形で見分ける目印で、全部は止められません。</p>
       </div>
 
       <div className="run-form">

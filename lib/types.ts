@@ -44,7 +44,7 @@ export type FixtureCase = {
   period: string;
   records: VisitRecord[];
   draft: string;
-  expected: Judgement[]; // 正解の判定（人が付けた）
+  expected: Judgement[]; // 正解の判定（開発に使ったClaudeが付けた。看護の専門職は未確認）
   savedJudgements: Judgement[]; // 検査役を実際に回した結果。回すまでは空
   savedMeta?: JudgeRunMeta;
 };

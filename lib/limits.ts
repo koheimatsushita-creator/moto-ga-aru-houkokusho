@@ -1,7 +1,9 @@
 // 実行モード（POST /api/judge）の回数の上限。見本モードには掛けない。
 // - 同じ接続元から1分3回：Workers の Rate Limiting（wrangler.jsonc の ratelimits）
-// - 全体で1日30回：KV に日本時間の日付ごとの回数を持つ。照合に失敗した回は数えない
-// 手元（npm run dev）で仕組みが無い時は、上限を掛けずに通す。
+// - 全体で1日30回：KV に日本時間の日付ごとの回数を持つ
+// 1日の回数は、AIを呼ぶ前に1回分を確保して数える。AIに届いた後の失敗（打ち切り・途中切れ・形の不一致）も数える。
+// 数えないのは、AIに届く前に断った時だけ（確保より前に断るので、戻す処理は要らない）。
+// KV は読んでから書くので、同時に来た分は数え漏らすことがある（docs/design.md）。
 
 export const DAILY_LIMIT = 30;
 export const PER_MINUTE_LIMIT = 3; // wrangler.jsonc の ratelimits と同じ値にする
@@ -21,27 +23,21 @@ export function jstDate(now: Date): string {
   return new Date(now.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 }
 
-const countKey = (now: Date) => `judge-count:${jstDate(now)}`;
+export const countKey = (now: Date) => `judge-count:${jstDate(now)}`;
 
 export type LimitResult = { ok: true } | { ok: false; code: "rate_limited_minute" | "rate_limited_daily"; message: string };
 
-// 照合を呼ぶ前に確かめる
-export async function checkLimits(opts: { ip: string; now: Date; limiter?: RateLimiter; store?: CountStore }): Promise<LimitResult> {
-  if (opts.store) {
-    const used = Number((await opts.store.get(countKey(opts.now))) ?? 0);
-    if (used >= DAILY_LIMIT) return { ok: false, code: "rate_limited_daily", message: DAILY_MESSAGE };
-  }
-  if (opts.limiter) {
-    const { success } = await opts.limiter.limit({ key: opts.ip });
-    if (!success) return { ok: false, code: "rate_limited_minute", message: MINUTE_MESSAGE };
-  }
-  return { ok: true };
+// 同じ接続元から1分の上限
+export async function checkMinute(limiter: RateLimiter, ip: string): Promise<LimitResult> {
+  const { success } = await limiter.limit({ key: ip });
+  return success ? { ok: true } : { ok: false, code: "rate_limited_minute", message: MINUTE_MESSAGE };
 }
 
-// 照合に成功した時だけ数える（同時に来た時は数え漏れがありうるが、上限の目安としては足りる）
-export async function countSuccess(opts: { now: Date; store?: CountStore }): Promise<void> {
-  if (!opts.store) return;
-  const key = countKey(opts.now);
-  const used = Number((await opts.store.get(key)) ?? 0);
-  await opts.store.put(key, String(used + 1), { expirationTtl: 2 * 24 * 60 * 60 });
+// 1日の上限：空きがあれば1回分を確保して数える。AIを呼ぶ直前に1度だけ呼ぶ
+export async function reserveDaily(store: CountStore, now: Date): Promise<LimitResult> {
+  const key = countKey(now);
+  const used = Number((await store.get(key)) ?? 0);
+  if (used >= DAILY_LIMIT) return { ok: false, code: "rate_limited_daily", message: DAILY_MESSAGE };
+  await store.put(key, String(used + 1), { expirationTtl: 2 * 24 * 60 * 60 });
+  return { ok: true };
 }

@@ -21,7 +21,7 @@ export function ReviewFlow({
   records: VisitRecord[];
   sentences: Sentence[];
   judgements: Judgement[];
-  meta: JudgeRunMeta | null; // null は人が付けた正解を表示している時
+  meta: JudgeRunMeta | null; // null は正解（expected）を表示している時
   isSample: boolean;
   title: string;
   header?: ReactNode; // 照合の画面でだけ出す見出し
@@ -34,6 +34,9 @@ export function ReviewFlow({
   const [issuedAt, setIssuedAt] = useState("");
 
   const g = guard(sentences, judgements, decisions);
+  // 実行モードでは確認者の名前が要る（見本モードは例の名前が入っている）
+  const reviewerMissing = !isSample && !reviewer.trim();
+  const canIssue = g.canIssue && !reviewerMissing;
   const report = finalReport(sentences, judgements, decisions);
 
   function choose(sentenceId: string, action: Decision["action"]) {
@@ -43,7 +46,7 @@ export function ReviewFlow({
     setDecisions((prev) => ({ ...prev, [sentenceId]: { ...prev[sentenceId], reason } }));
   }
   function issue() {
-    if (!g.canIssue) return;
+    if (!canIssue) return;
     setIssuedAt(new Date().toLocaleString("ja-JP", { dateStyle: "long", timeStyle: "short" }));
     setView("issue");
     window.scrollTo(0, 0);
@@ -135,9 +138,10 @@ export function ReviewFlow({
       </section>
 
       <section className="issue-bar" aria-live="polite">
-        <button type="button" className="button" onClick={issue} disabled={!g.canIssue}>出す</button>
+        <button type="button" className="button" onClick={issue} disabled={!canIssue}>出す</button>
         <div>
           {guardMessage(g).map((m) => <p key={m} className="guard">{m}</p>)}
+          {reviewerMissing && <p className="guard">確認者の名前が空です。</p>}
           {g.canIssue && <p className="muted">赤の文はすべて処理されました。</p>}
           {g.yellowPending.length > 0 && <p className="muted">黄の未処理{g.yellowPending.length}件は、件数を検査記録に残します。</p>}
         </div>
@@ -202,7 +206,7 @@ function IssueRecord({
         <dt>確認者</dt><dd>{reviewer || "（未記入）"}（{reviewerRole}）</dd>
         <dt>日時</dt><dd>{issuedAt}</dd>
         <dt>判定</dt>
-        <dd>{meta ? `AIの検査役（${meta.model}）が ${judgedAt} に判定` : "人が付けた正解の判定（AIの判定は未保存）"}</dd>
+        <dd>{meta ? `AIの検査役（${meta.model}）が ${judgedAt} に判定` : "開発に使ったClaudeが付けた正解（AIの検査役の判定は未保存）"}</dd>
       </dl>
 
       <h2>判定ごとの件数</h2>

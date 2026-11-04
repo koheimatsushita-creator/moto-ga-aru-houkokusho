@@ -23,8 +23,8 @@ Next.js + Cloudflare Workers（@opennextjs/cloudflare）。認証は付けない
 docs/requirements.md（何を作るか）と docs/design.md（どう作るか）が正。現在地はリポジトリ直下の 00_引き継ぎ_現在地.md に書く。
 
 ## 審査で見られること
-「Claude Codeを開発の中心に据えて何が可能になったか」「モデルや機能を目的に応じて使い分けているか」。だから次を期間中にこのリポジトリの中に作り、使った記録を docs/claude-no-tsukaikata.md に残す。
-- .claude/skills/ に報告書様式と架空データ作成のスキル
-- .claude/agents/ に判定の試験役（検査役の判定を正解と突き合わせる）
-- .claude/settings.json のフックで、コミット前に鍵の形と電話番号の形を止める
+「Claude Codeを開発の中心に据えて何が可能になったか」「モデルや機能を目的に応じて使い分けているか」。実際にやったことだけを docs/claude-no-tsukaikata.md に残す（後から道具を作り足して記録を合わせない）。
+- 作る係と確かめる係を別の会話に分ける。公開前に別の目（点検役・Codex）に確かめさせる
+- アプリの中の検査役は Claude API（claude-opus-5-5）の構造化出力で受け、サーバー側の確かめ直しを通す。判定の揺れは npm run eval で測る
+- コミットの前に鍵の形を止める仕組みは githooks/pre-commit（git config core.hooksPath githooks）。.claude/skills・.claude/agents・.claude/settings.json のフックは作っていない
 - 実アプリの中で「フック」「スキル」という言葉を使わない。実行時の検査は「サーバー側の検査」と正直に書く

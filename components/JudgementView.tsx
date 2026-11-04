@@ -62,7 +62,7 @@ export function JudgementView({
                   </div>
                   <p className="sentence-text">{s.text}</p>
                   {j?.evidenceQuote && <p className="quote">記録：「{j.evidenceQuote}」</p>}
-                  {j?.reason && <p className="muted">{j.reason}</p>}
+                  {j?.reason && <p className="muted"><span className="ai-note">AIの説明（参考）</span>{j.reason}</p>}
                   {j?.machineNote && <p className="machine-note">サーバー側の検査：{j.machineNote}</p>}
                   {renderExtra?.(s, j)}
                 </li>

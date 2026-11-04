@@ -25,7 +25,7 @@ export default async function CheckPage({
     );
   }
 
-  // 検査役を回した結果があればそれを、無ければ人が付けた正解を表示する（どちらかを画面に明記する）。
+  // 検査役を回した結果があればそれを、無ければ正解（expected）を表示する（どちらかを画面に明記する）。
   const fromSaved = c.savedJudgements.length > 0;
   const sentences = splitSentences(c.draft);
 
@@ -51,7 +51,7 @@ export default async function CheckPage({
             <p className="source-note">
               {meta
                 ? `AIの検査役（${meta.model}）が ${meta.judgedAt.slice(0, 10)} に実際に判定し、保存しておいた結果です。`
-                : "AIの検査役の結果はまだ保存していません。いまは人が付けた正解の判定を表示しています。"}
+                : "AIの検査役の結果はまだ保存していません。いまは開発に使ったClaudeが付けた正解（看護の専門職は未確認）を表示しています。"}
               記録に無い＝誤りではなく、確認が要るという印です。
             </p>
           </>

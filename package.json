@@ -10,6 +10,7 @@
     "check:fixtures": "node scripts/check-fixtures.mjs",
     "check:review": "node scripts/check-review.mjs",
     "check:limits": "node scripts/check-limits.mjs",
+    "check:postcheck": "node scripts/check-postcheck.mjs",
     "judge:fixtures": "node scripts/judge-fixtures.mjs",
     "eval": "node scripts/eval.mjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",

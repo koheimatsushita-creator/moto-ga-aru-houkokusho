@@ -1,0 +1,21 @@
+#!/bin/sh
+# コミットの前に、鍵の形（Anthropic の API キーなど）が入っていないかを確かめる。
+# 見つけたらコミットを止め、ファイル名だけを出す（鍵の中身は表示しない）。
+# 有効にする: git config core.hooksPath githooks
+PREFIX="sk-""ant-"
+PATTERN="${PREFIX}[A-Za-z0-9_-]{20,}|ANTHROPIC_API_KEY[[:space:]]*=[[:space:]]*[^[:space:]]{20,}"
+found=0
+for f in $(git diff --cached --name-only --diff-filter=ACMR); do
+  case "$f" in
+    .dev.vars|.env|.env.*) echo "鍵の置き場のファイルはコミットしません: $f"; found=1; continue ;;
+  esac
+  if git show ":$f" 2>/dev/null | grep -IEq "$PATTERN"; then
+    echo "鍵の形が見つかりました: $f"
+    found=1
+  fi
+done
+if [ "$found" -ne 0 ]; then
+  echo "コミットを止めました。鍵を取り除いてから、もう一度コミットしてください。"
+  exit 1
+fi
+exit 0
