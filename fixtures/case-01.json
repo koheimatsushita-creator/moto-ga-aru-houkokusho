@@ -4,21 +4,196 @@
   "subject": "利用者A",
   "period": "2026年10月",
   "records": [
-    { "id": "R01", "date": "2026-10-02", "staffRole": "看護師", "lines": ["体温36.5度、血圧132/78、脈拍72。", "右下腿に浮腫あり、指で押すと跡が残る程度。", "内服は家族が週ごとに分けて管理している。"] },
-    { "id": "R02", "date": "2026-10-09", "staffRole": "看護師", "lines": ["体温36.7度、血圧128/76。", "浮腫は前回より軽い。", "夜中に2回トイレに起きると本人より。"] },
-    { "id": "R03", "date": "2026-10-16", "staffRole": "看護師", "lines": ["血圧138/80。", "入浴介助を実施。皮膚に発赤なし。", "食事は3食とも半分程度と家族より。"] },
-    { "id": "R04", "date": "2026-10-23", "staffRole": "看護師", "lines": ["体温36.4度、血圧130/76。", "右下腿の浮腫は軽度で経過。", "歩行時にふらつきあり、杖を使用。"] }
+    {
+      "id": "R01",
+      "date": "2026-10-02",
+      "staffRole": "看護師",
+      "lines": [
+        "体温36.5度、血圧132/78、脈拍72。",
+        "右下腿に浮腫あり、指で押すと跡が残る程度。",
+        "内服は家族が週ごとに分けて管理している。"
+      ]
+    },
+    {
+      "id": "R02",
+      "date": "2026-10-09",
+      "staffRole": "看護師",
+      "lines": [
+        "体温36.7度、血圧128/76。",
+        "浮腫は前回より軽い。",
+        "夜中に2回トイレに起きると本人より。"
+      ]
+    },
+    {
+      "id": "R03",
+      "date": "2026-10-16",
+      "staffRole": "看護師",
+      "lines": [
+        "血圧138/80。",
+        "入浴介助を実施。皮膚に発赤なし。",
+        "食事は3食とも半分程度と家族より。"
+      ]
+    },
+    {
+      "id": "R04",
+      "date": "2026-10-23",
+      "staffRole": "看護師",
+      "lines": [
+        "体温36.4度、血圧130/76。",
+        "右下腿の浮腫は軽度で経過。",
+        "歩行時にふらつきあり、杖を使用。"
+      ]
+    }
   ],
   "draft": "右下腿に浮腫があり、指で押すと跡が残る程度だった。その後、浮腫は軽度で経過している。内服は家族が管理している。夜間は良眠している。食事は3食とも半分程度摂取している。ADL（日常生活動作）は自立している。入浴時、皮膚に発赤は見られなかった。便秘のため下剤を調整した。",
   "expected": [
-    { "sentenceId": "S01", "verdict": "一致", "evidenceIds": ["R01"], "evidenceQuote": "右下腿に浮腫あり、指で押すと跡が残る程度", "reason": "記録と同じ内容。" },
-    { "sentenceId": "S02", "verdict": "一致", "evidenceIds": ["R04"], "evidenceQuote": "右下腿の浮腫は軽度で経過", "reason": "記録と同じ内容。" },
-    { "sentenceId": "S03", "verdict": "言い換え", "evidenceIds": ["R01"], "evidenceQuote": "内服は家族が週ごとに分けて管理している", "reason": "「週ごとに分けて」が省かれている。" },
-    { "sentenceId": "S04", "verdict": "反する", "evidenceIds": ["R02"], "evidenceQuote": "夜中に2回トイレに起きると本人より", "reason": "記録では夜中に2回起きている。良眠の記載は見当たらない。" },
-    { "sentenceId": "S05", "verdict": "言い換え", "evidenceIds": ["R03"], "evidenceQuote": "食事は3食とも半分程度と家族より", "reason": "家族からの話である点が省かれている。" },
-    { "sentenceId": "S06", "verdict": "根拠なし", "evidenceIds": [], "evidenceQuote": "", "reason": "ADLや自立についての記載が見当たらない。説明語が足されている。" },
-    { "sentenceId": "S07", "verdict": "言い換え", "evidenceIds": ["R03"], "evidenceQuote": "皮膚に発赤なし", "reason": "記録の内容を別の言葉にしている。" },
-    { "sentenceId": "S08", "verdict": "根拠なし", "evidenceIds": [], "evidenceQuote": "", "reason": "便秘や下剤の記載が見当たらない。" }
+    {
+      "sentenceId": "S01",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "右下腿に浮腫あり、指で押すと跡が残る程度",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S02",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R04"
+      ],
+      "evidenceQuote": "右下腿の浮腫は軽度で経過",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S03",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "内服は家族が週ごとに分けて管理している",
+      "reason": "「週ごとに分けて」が省かれている。"
+    },
+    {
+      "sentenceId": "S04",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R02"
+      ],
+      "evidenceQuote": "夜中に2回トイレに起きると本人より",
+      "reason": "記録では夜中に2回起きている。良眠の記載は見当たらない。"
+    },
+    {
+      "sentenceId": "S05",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "食事は3食とも半分程度と家族より",
+      "reason": "家族からの話である点が省かれている。"
+    },
+    {
+      "sentenceId": "S06",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "ADLや自立についての記載が見当たらない。説明語が足されている。"
+    },
+    {
+      "sentenceId": "S07",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "皮膚に発赤なし",
+      "reason": "記録の内容を別の言葉にしている。"
+    },
+    {
+      "sentenceId": "S08",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "便秘や下剤の記載が見当たらない。"
+    }
   ],
-  "savedJudgements": []
+  "savedJudgements": [
+    {
+      "sentenceId": "S01",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "右下腿に浮腫あり、指で押すと跡が残る程度。",
+      "reason": "R01の記載と同じ内容を文の形にしただけで、内容の違いは見当たらない。"
+    },
+    {
+      "sentenceId": "S02",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R02",
+        "R04"
+      ],
+      "evidenceQuote": "右下腿の浮腫は軽度で経過。",
+      "reason": "R02の「前回より軽い」とR04の「軽度で経過」を、その後の経過としてまとめている。"
+    },
+    {
+      "sentenceId": "S03",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "内服は家族が週ごとに分けて管理している。",
+      "reason": "記録にある「週ごとに分けて」という管理方法を省いて、家族が管理していることだけを書いている。"
+    },
+    {
+      "sentenceId": "S04",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R02"
+      ],
+      "evidenceQuote": "夜中に2回トイレに起きると本人より。",
+      "reason": "記録には夜中に2回トイレに起きるとあり、「良眠」という記載とは食い違う。"
+    },
+    {
+      "sentenceId": "S05",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "食事は3食とも半分程度と家族より。",
+      "reason": "記録では家族からの話だが、文では「家族より」という情報源が抜けているので確認が必要である。"
+    },
+    {
+      "sentenceId": "S06",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R03",
+        "R04"
+      ],
+      "evidenceQuote": "歩行時にふらつきあり、杖を使用。",
+      "reason": "記録には入浴介助の実施と、歩行時のふらつき・杖の使用があり、「自立」という記載とは食い違う。"
+    },
+    {
+      "sentenceId": "S07",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "入浴介助を実施。皮膚に発赤なし。",
+      "reason": "入浴介助の際に発赤がなかったという記録を、入浴時の観察として言い換えている。"
+    },
+    {
+      "sentenceId": "S08",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "便秘や下剤の調整については、どの訪問記録にも記載がない。"
+    }
+  ],
+  "savedMeta": {
+    "model": "claude-opus-5-5",
+    "effort": "medium",
+    "judgedAt": "2026-11-04T03:20:37.205Z",
+    "promptNote": "言い換えの例：仮の例"
+  }
 }

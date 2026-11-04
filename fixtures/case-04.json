@@ -4,20 +4,184 @@
   "subject": "利用者D",
   "period": "2026年10月",
   "records": [
-    { "id": "R01", "date": "2026-10-06", "staffRole": "看護師", "lines": ["在宅酸素は安静時1リットルで使用。", "SpO2は安静時95%。", "痰がらみの咳が時々あり。"] },
-    { "id": "R02", "date": "2026-10-13", "staffRole": "看護師", "lines": ["SpO2は安静時94%、歩行後89%。", "歩行後は2分休むと93%に戻った。", "酸素チューブの折れなし。"] },
-    { "id": "R03", "date": "2026-10-20", "staffRole": "看護師", "lines": ["SpO2は安静時95%。", "痰は白色で量は少ない。", "体重は前回より1キロ増えたと家族より。"] },
-    { "id": "R04", "date": "2026-10-27", "staffRole": "看護師", "lines": ["SpO2は安静時96%。", "夜は2時間おきに目が覚めると本人より。", "体温36.8度。"] }
+    {
+      "id": "R01",
+      "date": "2026-10-06",
+      "staffRole": "看護師",
+      "lines": [
+        "在宅酸素は安静時1リットルで使用。",
+        "SpO2は安静時95%。",
+        "痰がらみの咳が時々あり。"
+      ]
+    },
+    {
+      "id": "R02",
+      "date": "2026-10-13",
+      "staffRole": "看護師",
+      "lines": [
+        "SpO2は安静時94%、歩行後89%。",
+        "歩行後は2分休むと93%に戻った。",
+        "酸素チューブの折れなし。"
+      ]
+    },
+    {
+      "id": "R03",
+      "date": "2026-10-20",
+      "staffRole": "看護師",
+      "lines": [
+        "SpO2は安静時95%。",
+        "痰は白色で量は少ない。",
+        "体重は前回より1キロ増えたと家族より。"
+      ]
+    },
+    {
+      "id": "R04",
+      "date": "2026-10-27",
+      "staffRole": "看護師",
+      "lines": [
+        "SpO2は安静時96%。",
+        "夜は2時間おきに目が覚めると本人より。",
+        "体温36.8度。"
+      ]
+    }
   ],
   "draft": "在宅酸素は安静時1リットルで使用している。安静時のSpO2は94〜96%で推移した。歩行後にSpO2が89%まで下がり、2分の休憩で93%に戻った。痰は白色で少量である。夜間は良眠している。体重は1キロ減少した。呼吸リハビリを毎日行っている。",
   "expected": [
-    { "sentenceId": "S01", "verdict": "一致", "evidenceIds": ["R01"], "evidenceQuote": "在宅酸素は安静時1リットルで使用", "reason": "記録と同じ内容。" },
-    { "sentenceId": "S02", "verdict": "言い換え", "evidenceIds": ["R01", "R02", "R03", "R04"], "evidenceQuote": "SpO2は安静時94%", "reason": "4回の値を範囲にまとめている。" },
-    { "sentenceId": "S03", "verdict": "言い換え", "evidenceIds": ["R02"], "evidenceQuote": "歩行後は2分休むと93%に戻った", "reason": "同じ日の2行をまとめている。" },
-    { "sentenceId": "S04", "verdict": "言い換え", "evidenceIds": ["R03"], "evidenceQuote": "痰は白色で量は少ない", "reason": "記録の内容を別の言葉にしている。" },
-    { "sentenceId": "S05", "verdict": "反する", "evidenceIds": ["R04"], "evidenceQuote": "夜は2時間おきに目が覚めると本人より", "reason": "記録では夜に何度も目が覚めている。" },
-    { "sentenceId": "S06", "verdict": "反する", "evidenceIds": ["R03"], "evidenceQuote": "体重は前回より1キロ増えたと家族より", "reason": "記録では増えている。" },
-    { "sentenceId": "S07", "verdict": "根拠なし", "evidenceIds": [], "evidenceQuote": "", "reason": "呼吸リハビリの記載が見当たらない。" }
+    {
+      "sentenceId": "S01",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "在宅酸素は安静時1リットルで使用",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S02",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R01",
+        "R02",
+        "R03",
+        "R04"
+      ],
+      "evidenceQuote": "SpO2は安静時94%",
+      "reason": "4回の値を範囲にまとめている。"
+    },
+    {
+      "sentenceId": "S03",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R02"
+      ],
+      "evidenceQuote": "歩行後は2分休むと93%に戻った",
+      "reason": "同じ日の2行をまとめている。"
+    },
+    {
+      "sentenceId": "S04",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "痰は白色で量は少ない",
+      "reason": "記録の内容を別の言葉にしている。"
+    },
+    {
+      "sentenceId": "S05",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R04"
+      ],
+      "evidenceQuote": "夜は2時間おきに目が覚めると本人より",
+      "reason": "記録では夜に何度も目が覚めている。"
+    },
+    {
+      "sentenceId": "S06",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "体重は前回より1キロ増えたと家族より",
+      "reason": "記録では増えている。"
+    },
+    {
+      "sentenceId": "S07",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "呼吸リハビリの記載が見当たらない。"
+    }
   ],
-  "savedJudgements": []
+  "savedJudgements": [
+    {
+      "sentenceId": "S01",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "在宅酸素は安静時1リットルで使用。",
+      "reason": "R01の記載と同じ内容で、語尾を整えただけである。"
+    },
+    {
+      "sentenceId": "S02",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R01",
+        "R02",
+        "R03",
+        "R04"
+      ],
+      "evidenceQuote": "SpO2は安静時95%。",
+      "reason": "4回の訪問の安静時SpO2（95%、94%、95%、96%）を94〜96%の範囲にまとめている。"
+    },
+    {
+      "sentenceId": "S03",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R02"
+      ],
+      "evidenceQuote": "SpO2は安静時94%、歩行後89%。\n歩行後は2分休むと93%に戻った。",
+      "reason": "R02の歩行後89%と2分休憩後93%の記載を1文にまとめている。"
+    },
+    {
+      "sentenceId": "S04",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "痰は白色で量は少ない。",
+      "reason": "R03の「量は少ない」を「少量」と言い換えているが、記録は10月20日の1回分のみである。"
+    },
+    {
+      "sentenceId": "S05",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R04"
+      ],
+      "evidenceQuote": "夜は2時間おきに目が覚めると本人より。",
+      "reason": "記録では本人が夜2時間おきに目が覚めると話しており、「良眠」とは食い違う。"
+    },
+    {
+      "sentenceId": "S06",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "体重は前回より1キロ増えたと家族より。",
+      "reason": "記録では家族の話として1キロ増えたとあり、「減少」と逆の内容である。"
+    },
+    {
+      "sentenceId": "S07",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "呼吸リハビリの実施やその頻度についての記載は、どの訪問記録にも見当たらない。"
+    }
+  ],
+  "savedMeta": {
+    "model": "claude-opus-5-5",
+    "effort": "medium",
+    "judgedAt": "2026-11-04T03:21:04.057Z",
+    "promptNote": "言い換えの例：仮の例"
+  }
 }

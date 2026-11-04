@@ -4,21 +4,194 @@
   "subject": "利用者E",
   "period": "2026年10月",
   "records": [
-    { "id": "R01", "date": "2026-10-05", "staffRole": "看護師", "lines": ["日付を聞くと正しく答えた。", "服薬カレンダーで飲み忘れ2回を確認。", "長女が週3回来ていると本人より。"] },
-    { "id": "R02", "date": "2026-10-12", "staffRole": "看護師", "lines": ["服薬カレンダーで飲み忘れなし。", "デイサービスに週2回通っている。"] },
-    { "id": "R03", "date": "2026-10-19", "staffRole": "看護師", "lines": ["同じ質問を3回繰り返した。", "服薬カレンダーで飲み忘れ1回を確認。", "便は2日に1回と本人より。"] },
-    { "id": "R04", "date": "2026-10-26", "staffRole": "看護師", "lines": ["日付を聞くと1日ずれて答えた。", "デイサービスで入浴していると長女より。"] }
+    {
+      "id": "R01",
+      "date": "2026-10-05",
+      "staffRole": "看護師",
+      "lines": [
+        "日付を聞くと正しく答えた。",
+        "服薬カレンダーで飲み忘れ2回を確認。",
+        "長女が週3回来ていると本人より。"
+      ]
+    },
+    {
+      "id": "R02",
+      "date": "2026-10-12",
+      "staffRole": "看護師",
+      "lines": [
+        "服薬カレンダーで飲み忘れなし。",
+        "デイサービスに週2回通っている。"
+      ]
+    },
+    {
+      "id": "R03",
+      "date": "2026-10-19",
+      "staffRole": "看護師",
+      "lines": [
+        "同じ質問を3回繰り返した。",
+        "服薬カレンダーで飲み忘れ1回を確認。",
+        "便は2日に1回と本人より。"
+      ]
+    },
+    {
+      "id": "R04",
+      "date": "2026-10-26",
+      "staffRole": "看護師",
+      "lines": [
+        "日付を聞くと1日ずれて答えた。",
+        "デイサービスで入浴していると長女より。"
+      ]
+    }
   ],
   "draft": "デイサービスに週2回通っている。服薬は飲み忘れが時々ある。日付の確認では正しく答えられていた。同じ質問を繰り返すことがあった。入浴はデイサービスで行っている。長女が毎日訪問し、見守っている。排便コントロールは良好である。認知症の進行がみられる。",
   "expected": [
-    { "sentenceId": "S01", "verdict": "一致", "evidenceIds": ["R02"], "evidenceQuote": "デイサービスに週2回通っている", "reason": "記録と同じ内容。" },
-    { "sentenceId": "S02", "verdict": "言い換え", "evidenceIds": ["R01", "R03"], "evidenceQuote": "服薬カレンダーで飲み忘れ2回を確認", "reason": "回数を「時々」とまとめている。" },
-    { "sentenceId": "S03", "verdict": "反する", "evidenceIds": ["R04"], "evidenceQuote": "日付を聞くと1日ずれて答えた", "reason": "最後の訪問では1日ずれて答えている。" },
-    { "sentenceId": "S04", "verdict": "言い換え", "evidenceIds": ["R03"], "evidenceQuote": "同じ質問を3回繰り返した", "reason": "回数が省かれている。" },
-    { "sentenceId": "S05", "verdict": "言い換え", "evidenceIds": ["R04"], "evidenceQuote": "デイサービスで入浴していると長女より", "reason": "長女からの話である点が省かれている。" },
-    { "sentenceId": "S06", "verdict": "反する", "evidenceIds": ["R01"], "evidenceQuote": "長女が週3回来ていると本人より", "reason": "記録では週3回。" },
-    { "sentenceId": "S07", "verdict": "根拠なし", "evidenceIds": [], "evidenceQuote": "", "reason": "便の回数の記載はあるが、「良好」という記載は見当たらない。" },
-    { "sentenceId": "S08", "verdict": "根拠なし", "evidenceIds": [], "evidenceQuote": "", "reason": "認知症や進行についての記載が見当たらない。" }
+    {
+      "sentenceId": "S01",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R02"
+      ],
+      "evidenceQuote": "デイサービスに週2回通っている",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S02",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R01",
+        "R03"
+      ],
+      "evidenceQuote": "服薬カレンダーで飲み忘れ2回を確認",
+      "reason": "回数を「時々」とまとめている。"
+    },
+    {
+      "sentenceId": "S03",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R04"
+      ],
+      "evidenceQuote": "日付を聞くと1日ずれて答えた",
+      "reason": "最後の訪問では1日ずれて答えている。"
+    },
+    {
+      "sentenceId": "S04",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "同じ質問を3回繰り返した",
+      "reason": "回数が省かれている。"
+    },
+    {
+      "sentenceId": "S05",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R04"
+      ],
+      "evidenceQuote": "デイサービスで入浴していると長女より",
+      "reason": "長女からの話である点が省かれている。"
+    },
+    {
+      "sentenceId": "S06",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "長女が週3回来ていると本人より",
+      "reason": "記録では週3回。"
+    },
+    {
+      "sentenceId": "S07",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "便の回数の記載はあるが、「良好」という記載は見当たらない。"
+    },
+    {
+      "sentenceId": "S08",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "認知症や進行についての記載が見当たらない。"
+    }
   ],
-  "savedJudgements": []
+  "savedJudgements": [
+    {
+      "sentenceId": "S01",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R02"
+      ],
+      "evidenceQuote": "デイサービスに週2回通っている。",
+      "reason": "R02の記載と同じ内容です。"
+    },
+    {
+      "sentenceId": "S02",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R01",
+        "R02",
+        "R03"
+      ],
+      "evidenceQuote": "服薬カレンダーで飲み忘れ2回を確認。",
+      "reason": "記録は飲み忘れ2回（R01）、なし（R02）、1回（R03）で、それを「時々ある」とまとめています。"
+    },
+    {
+      "sentenceId": "S03",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R04",
+        "R01"
+      ],
+      "evidenceQuote": "日付を聞くと1日ずれて答えた。",
+      "reason": "R01では正しく答えていますが、R04では1日ずれて答えており、「正しく答えられていた」とだけ書くと記録と食い違います。"
+    },
+    {
+      "sentenceId": "S04",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "同じ質問を3回繰り返した。",
+      "reason": "R03の1回の訪問で3回繰り返した記録を「繰り返すことがあった」とまとめています。"
+    },
+    {
+      "sentenceId": "S05",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R04"
+      ],
+      "evidenceQuote": "デイサービスで入浴していると長女より。",
+      "reason": "記録は長女からの情報ですが、文では誰の話かが省かれています。"
+    },
+    {
+      "sentenceId": "S06",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "長女が週3回来ていると本人より。",
+      "reason": "記録は週3回（本人の話）ですが、文は「毎日」としています。また「見守っている」は記録にありません。"
+    },
+    {
+      "sentenceId": "S07",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "記録は便が2日に1回という本人の話だけで、「排便コントロールは良好」という評価は記録にありません。"
+    },
+    {
+      "sentenceId": "S08",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "記録には「認知症」という診断の語も、「進行」という評価もありません。"
+    }
+  ],
+  "savedMeta": {
+    "model": "claude-opus-5-5",
+    "effort": "medium",
+    "judgedAt": "2026-11-04T03:21:16.247Z",
+    "promptNote": "言い換えの例：仮の例"
+  }
 }

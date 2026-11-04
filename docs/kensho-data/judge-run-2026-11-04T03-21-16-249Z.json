@@ -1,0 +1,122 @@
+[
+  {
+    "case": "01",
+    "ok": true,
+    "agree": 6,
+    "total": 8,
+    "mismatches": [
+      {
+        "sentenceId": "S02",
+        "expected": "一致",
+        "got": "言い換え",
+        "reason": "R02の「前回より軽い」とR04の「軽度で経過」を、その後の経過としてまとめている。"
+      },
+      {
+        "sentenceId": "S06",
+        "expected": "根拠なし",
+        "got": "反する",
+        "reason": "記録には入浴介助の実施と、歩行時のふらつき・杖の使用があり、「自立」という記載とは食い違う。"
+      }
+    ],
+    "usage": {
+      "inputTokens": 2512,
+      "outputTokens": 1208,
+      "stopReason": "end_turn",
+      "seconds": 12.463
+    },
+    "wallSeconds": 13.16,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T03:20:37.205Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  },
+  {
+    "case": "02",
+    "ok": true,
+    "agree": 8,
+    "total": 8,
+    "mismatches": [],
+    "usage": {
+      "inputTokens": 2480,
+      "outputTokens": 728,
+      "stopReason": "end_turn",
+      "seconds": 8.354
+    },
+    "wallSeconds": 8.364,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T03:20:45.576Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  },
+  {
+    "case": "03",
+    "ok": true,
+    "agree": 6,
+    "total": 7,
+    "mismatches": [
+      {
+        "sentenceId": "S07",
+        "expected": "反する",
+        "got": "根拠なし",
+        "reason": "記録には食事療法を守れているかの記載は無く、R02には間食に菓子パンを食べたとの本人の話がある。"
+      }
+    ],
+    "usage": {
+      "inputTokens": 2493,
+      "outputTokens": 1061,
+      "stopReason": "end_turn",
+      "seconds": 11.283
+    },
+    "wallSeconds": 11.301,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T03:20:56.878Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  },
+  {
+    "case": "04",
+    "ok": true,
+    "agree": 7,
+    "total": 7,
+    "mismatches": [],
+    "usage": {
+      "inputTokens": 2468,
+      "outputTokens": 722,
+      "stopReason": "end_turn",
+      "seconds": 7.163
+    },
+    "wallSeconds": 7.178,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T03:21:04.057Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  },
+  {
+    "case": "05",
+    "ok": true,
+    "agree": 8,
+    "total": 8,
+    "mismatches": [],
+    "usage": {
+      "inputTokens": 2459,
+      "outputTokens": 1278,
+      "stopReason": "end_turn",
+      "seconds": 12.169
+    },
+    "wallSeconds": 12.186,
+    "meta": {
+      "model": "claude-opus-5-5",
+      "effort": "medium",
+      "judgedAt": "2026-11-04T03:21:16.247Z",
+      "promptNote": "言い換えの例：仮の例"
+    }
+  }
+]
