@@ -27,7 +27,10 @@
 
 ## サーバー側
 - POST /api/judge: 入力 4,000字まで。個人情報の形の検査をサーバーでも行う。max_tokens 4,000。1回の呼び出しは60秒以内に収める。切れたら失敗の文言を返す
-- ANTHROPIC_API_KEY は Cloudflare の Secrets（ローカルは .dev.vars）
+- 実行モードのスイッチ：wrangler.jsonc の vars の RUN_MODE（鍵ではないので vars）。公開版は "closed"（見本だけ）、"open" で開く。手元の npm run dev は値に関わらず開く（lib/runMode.ts）
+  - 閉じている時、/api/judge はよそのサイトからの403の確かめの直後に、本文を読まず・回数の仕組みにも触れず・AIも呼ばずに503を返す。画面は実行モードの入口に説明を出して押せなくする
+  - 公開版には ANTHROPIC_API_KEY を入れない。開け直す時は KV を作る→id を入れる→鍵を入れる→RUN_MODE を open（README）。開けたのに KV が無い時は503で止まる
+- ANTHROPIC_API_KEY は手元の .dev.vars（実行モードを開けた公開版を作る時だけ Cloudflare の Secrets）
 - 回数の上限（実行モードだけ。見本モードには掛けない）：全体で1日30回（Workers KV に日本時間の日付ごとの回数）＋同じ接続元から1分3回（Workers の Rate Limiting）。上限はサーバーで止める
   - 公開した物では、上限の仕組みが欠けていたらAIを呼ばずに503で止める。手元の npm run dev だけ素通り
   - 1日の回数は、AIを呼ぶ直前に1回分を確保して数える。AIに届いた後の失敗（打ち切り・途中切れ・形の不一致）も数える。数えないのは、AIに届く前に断った時（400・403・413・422・429・503）だけ

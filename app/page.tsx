@@ -1,7 +1,10 @@
 import Link from "next/link";
+import { RunModeClosed } from "@/components/RunModeClosed";
 import { fixtureCases } from "@/lib/fixtures";
+import { runModeOpenNow } from "@/lib/runModeServer";
 
-export default function Home() {
+export default async function Home() {
+  const runOpen = await runModeOpenNow();
   return (
     <main className="page">
       <header className="hero">
@@ -19,15 +22,19 @@ export default function Home() {
           <li><strong>利用者さんの情報は入力しないでください。</strong>架空の内容だけを使ってください。</li>
           <li><strong>診断や治療の助言はしません。</strong></li>
           <li><strong>記録に無い＝誤りではなく、確認が要るという印です。</strong>判定は人が画面で直せます。</li>
-          <li>この道具は入力を保存しません（画面を閉じると消えます）。実行モードでは、照合のため、Anthropic社のAPIへ送ります。</li>
-          <li>実行モードは全体で1日30回まで、同じ接続元からは1分に3回までです。上限に達しても見本モードは使えます。</li>
+          <li>この道具は入力を保存しません（画面を閉じると消えます）。{runOpen && "実行モードでは、照合のため、Anthropic社のAPIへ送ります。"}</li>
+          {runOpen ? (
+            <li>実行モードは全体で1日30回まで、同じ接続元からは1分に3回までです。上限に達しても見本モードは使えます。</li>
+          ) : (
+            <li>公開版では見本モードだけを動かせます。見本はAIを呼ばず、前もって判定した結果を表示します。</li>
+          )}
         </ul>
       </section>
 
       <section aria-labelledby="howto-title">
         <h2 id="howto-title">使い方</h2>
         <ol className="steps">
-          <li><span>1</span>見本を1つ選ぶ（または実行モードで架空の記録と下書きを貼る）</li>
+          <li><span>1</span>{runOpen ? "見本を1つ選ぶ（または実行モードで架空の記録と下書きを貼る）" : "下の見本を1つ選ぶ"}</li>
           <li><span>2</span>照合の画面で、左の訪問記録と右の文ごとの判定を見比べる</li>
           <li><span>3</span>印の付いた文ごとに「記録の言葉に戻す／削る／確認して残す」を選ぶ</li>
           <li><span>4</span>赤い印が残っていなければ「出す」を押し、検査記録を印刷する</li>
@@ -64,12 +71,18 @@ export default function Home() {
       </section>
 
       <section aria-labelledby="run-title">
-        <h2 id="run-title">実行モード</h2>
-        <p className="muted">
-          架空の訪問記録と下書きを貼って、AIに照合させます（入力は4,000字まで、全体で1日30回まで、同じ接続元からは1分に3回まで）。
-          送る前に、氏名・電話・住所などの形を見つけたら送信を止めます。これは形で見分ける目印で、全部は止められません。
-        </p>
-        <p><Link href="/check" className="button">実行モードへ</Link></p>
+        <h2 id="run-title">実行モード（AIでの照合）</h2>
+        {runOpen ? (
+          <>
+            <p className="muted">
+              架空の訪問記録と下書きを貼って、AIに照合させます（入力は4,000字まで、全体で1日30回まで、同じ接続元からは1分に3回まで）。
+              送る前に、氏名・電話・住所などの形を見つけたら送信を止めます。これは形で見分ける目印で、全部は止められません。
+            </p>
+            <p><Link href="/check" className="button">実行モードへ</Link></p>
+          </>
+        ) : (
+          <RunModeClosed />
+        )}
       </section>
 
       <footer className="footer muted">

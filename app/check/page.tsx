@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ReviewFlow } from "@/components/ReviewFlow";
+import { RunModeClosed } from "@/components/RunModeClosed";
 import { fixtureCases } from "@/lib/fixtures";
+import { runModeOpenNow } from "@/lib/runModeServer";
 import { splitSentences } from "@/lib/split";
 import { RunMode } from "./RunMode";
 
@@ -11,6 +13,16 @@ export default async function CheckPage({
 }) {
   const { case: caseId } = await searchParams;
   const c = fixtureCases.find((f) => f.id === caseId);
+
+  if (!c && !(await runModeOpenNow())) {
+    return (
+      <main className="page">
+        <p><Link href="/">← 入口へ戻る</Link></p>
+        <h1>照合（実行モード）</h1>
+        <RunModeClosed showSampleLink />
+      </main>
+    );
+  }
 
   if (!c) {
     return (

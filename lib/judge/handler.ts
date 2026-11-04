@@ -4,18 +4,19 @@
 import { findPii, piiMessage, type PiiHit } from "../pii.ts";
 import { checkMinute, reserveDaily, type CountStore, type RateLimiter } from "../limits.ts";
 import { splitSentences } from "../split.ts";
+import { RUN_MODE_CLOSED_MESSAGE } from "../runMode.ts";
 import { INPUT_LIMITS, judgeRequestSchema, type JudgeRequest } from "./schema.ts";
 
 export const FAILURE_MESSAGE = "照合できませんでした。入力を短くするか、見本モードをお試しください。AIに届いた後の失敗のため、この回も実行回数に数えます。";
 
-export type JudgeBindings = { ANTHROPIC_API_KEY?: string; JUDGE_RATE_LIMITER?: RateLimiter; JUDGE_COUNTS?: CountStore };
+export type JudgeBindings = { ANTHROPIC_API_KEY?: string; JUDGE_RATE_LIMITER?: RateLimiter; JUDGE_COUNTS?: CountStore; RUN_MODE?: string };
 export type JudgeFn = (apiKey: string, records: JudgeRequest["records"], draft: string) => Promise<unknown>;
 
 const reply = (status: number, body: Record<string, unknown>) => Response.json(body, { status });
 
 export async function handleJudge(
   request: Request,
-  deps: { env: JudgeBindings; production: boolean; judge: JudgeFn; now?: Date; log?: (msg: string, data?: unknown) => void },
+  deps: { env: JudgeBindings; production: boolean; runModeOpen: boolean; judge: JudgeFn; now?: Date; log?: (msg: string, data?: unknown) => void },
 ): Promise<Response> {
   const log = deps.log ?? ((msg, data) => console.error(msg, data ?? ""));
 
@@ -28,6 +29,9 @@ export async function handleJudge(
   if ((origin && origin !== new URL(request.url).origin) || (site && site !== "same-origin")) {
     return reply(403, { code: "forbidden", message: "この画面以外からの送信は受け付けていません。" });
   }
+
+  // 実行モードが閉じている時：本文を読まず、回数の仕組みにも触れず、AIも呼ばずに止める
+  if (!deps.runModeOpen) return reply(503, { code: "run_mode_closed", message: RUN_MODE_CLOSED_MESSAGE });
 
   // 本文の大きさ：JSONを読む前に見る
   const tooLarge = () => reply(413, { code: "too_large", message: "入力が大きすぎます。訪問記録と下書きを短くしてください。" });

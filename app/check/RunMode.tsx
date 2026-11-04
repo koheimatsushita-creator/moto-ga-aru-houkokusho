@@ -53,7 +53,7 @@ export function RunMode() {
       if (!res.ok) {
         setError({
           message: body.message ?? "照合できませんでした。入力を短くするか、見本モードをお試しください。",
-          toSample: ["no_key", "limits_unavailable", "rate_limited_daily", "judge_failed"].includes(body.code),
+          toSample: ["no_key", "limits_unavailable", "run_mode_closed", "rate_limited_daily", "judge_failed"].includes(body.code),
         });
         return;
       }

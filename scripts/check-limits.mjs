@@ -2,6 +2,7 @@
 // 使い方: npm run check:limits
 import { DAILY_LIMIT, countKey, jstDate, reserveDaily, checkMinute } from "../lib/limits.ts";
 import { handleJudge, FAILURE_MESSAGE } from "../lib/judge/handler.ts";
+import { isRunModeOpen, RUN_MODE_CLOSED_MESSAGE } from "../lib/runMode.ts";
 
 let problems = 0;
 const expect = (ok, msg) => {
@@ -42,7 +43,7 @@ function req(body = goodBody, headers = {}) {
   });
 }
 const quiet = () => {};
-function deps({ store = fakeStore(), limiter = fakeLimiter(), production = true, judge, now } = {}) {
+function deps({ store = fakeStore(), limiter = fakeLimiter(), production = true, runModeOpen = true, judge, now } = {}) {
   const calls = { n: 0 };
   return {
     calls,
@@ -50,6 +51,7 @@ function deps({ store = fakeStore(), limiter = fakeLimiter(), production = true,
     d: {
       env: { ANTHROPIC_API_KEY: "test-key-not-real", JUDGE_COUNTS: store, JUDGE_RATE_LIMITER: limiter },
       production,
+      runModeOpen,
       now,
       log: quiet,
       judge: async (...args) => {
@@ -200,6 +202,34 @@ for (const [label, env] of [
   expect(t.calls.n === 0, "A5 どれもAIを呼ばない");
   const t2 = deps();
   expect((await handleJudge(req(), t2.d)).status === 200, "A5 自分のサイトからは通る");
+}
+
+// --- 実行モードのスイッチ ---
+{
+  expect(isRunModeOpen({}, true) === false, "スイッチ：公開版は値が無ければ閉じる");
+  expect(isRunModeOpen({ RUN_MODE: "closed" }, true) === false, "スイッチ：公開版で RUN_MODE=closed は閉じる");
+  expect(isRunModeOpen({ RUN_MODE: "open" }, true) === true, "スイッチ：公開版で RUN_MODE=open は開く");
+  expect(isRunModeOpen({ RUN_MODE: "closed" }, false) === true, "スイッチ：手元（npm run dev）は既定で開く");
+
+  // 閉じた時：503、本文を読まない、KVに触れない、1分の上限にも触れない、AIを呼ばない
+  const touched = { store: 0, limiter: 0 };
+  const store = { get: async () => { touched.store++; return null; }, put: async () => { touched.store++; } };
+  const limiter = { limit: async () => { touched.limiter++; return { success: true }; } };
+  const t = deps({ store, limiter, runModeOpen: false });
+  const r = req();
+  const res = await handleJudge(r, t.d);
+  const body = await res.json();
+  expect(res.status === 503 && body.code === "run_mode_closed" && body.message === RUN_MODE_CLOSED_MESSAGE, `閉じた時：503「${body.message}」`);
+  expect(touched.store === 0 && touched.limiter === 0, "閉じた時：KVにも1分の上限にも触れない");
+  expect(t.calls.n === 0, "閉じた時：AIを呼ばない");
+  expect(r.bodyUsed === false, "閉じた時：本文を読まない");
+  const cross = await handleJudge(req(goodBody, { origin: "https://evil.test" }), deps({ runModeOpen: false }).d);
+  expect(cross.status === 403, "閉じた時も、よそのサイトからの送信は先に403");
+  // 開けたのに KV が無い時は、今の作りどおり503（limits_unavailable）で止まる
+  const t2 = deps({ runModeOpen: true });
+  t2.d.env.JUDGE_COUNTS = undefined;
+  const res2 = await handleJudge(req(), t2.d);
+  expect(res2.status === 503 && (await res2.json()).code === "limits_unavailable" && t2.calls.n === 0, "開けたのにKVが無い時：503で止まり、AIを呼ばない");
 }
 
 console.log(problems ? `問題 ${problems} 件` : "上限とAI代の守りはすべて期待どおり");

@@ -8,16 +8,16 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  // 実行モードの回数の上限（lib/limits.ts）。手元の npm run dev では使わない
+  // 実行モードの回数の上限（lib/limits.ts）。実行モードが閉じている間と、手元の npm run dev では使わない
   // 同じ接続元から1分3回。namespace_id は同じアカウントの中で重ならない番号にする（公開の時に確かめる）
   "ratelimits": [
     { "name": "JUDGE_RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 3, "period": 60 } }
   ],
-  // 全体で1日30回の回数を日付ごとに持つ。
-  // id は仮の値。公開の時に本体が `wrangler kv namespace create JUDGE_COUNTS` で作ったIDに差し替える
-  "kv_namespaces": [
-    { "binding": "JUDGE_COUNTS", "id": "REPLACE_WITH_KV_NAMESPACE_ID_AT_PUBLISH" }
-  ],
+  // 実行モードの開け閉め（lib/runMode.ts）。鍵ではないので vars に置く。
+  // 公開版は "closed"（見本だけを動かせる）。開ける時は README の「実行モードを開け直す手順」のとおり、
+  // 1日の回数を持つ KV（JUDGE_COUNTS）を作って kv_namespaces に入れ、鍵を入れてから "open" にする。
+  // 開けたのに KV が無い時は、AIを呼ばずに503で止まる。手元の npm run dev では、この値に関わらず開く
+  "vars": { "RUN_MODE": "closed" },
   // 版ごとの試し用URL（workers.dev）を出さない。上限の仕組みを通らない入口を作らないため
   "preview_urls": false,
   "observability": { "enabled": true }
