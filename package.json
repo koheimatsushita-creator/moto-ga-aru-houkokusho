@@ -9,6 +9,7 @@
     "typecheck": "tsc --noEmit",
     "check:fixtures": "node scripts/check-fixtures.mjs",
     "judge:fixtures": "node scripts/judge-fixtures.mjs",
+    "eval": "node scripts/eval.mjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
