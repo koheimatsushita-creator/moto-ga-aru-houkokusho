@@ -44,7 +44,8 @@ export async function POST(request: Request) {
     return reply(200, result);
   } catch (error) {
     const detail = error instanceof JudgeFailure ? error.message : "予期しないエラー";
+    const usage = error instanceof JudgeFailure ? error.usage : undefined;
     console.error("judge failed:", detail);
-    return reply(502, { code: "judge_failed", message: FAILURE, detail });
+    return reply(502, { code: "judge_failed", message: FAILURE, detail, usage });
   }
 }

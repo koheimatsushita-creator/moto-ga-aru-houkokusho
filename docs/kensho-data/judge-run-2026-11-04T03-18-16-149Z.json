@@ -1,0 +1,37 @@
+[
+  {
+    "case": "01",
+    "ok": false,
+    "status": 502,
+    "detail": "APIキーが受け付けられませんでした",
+    "wallSeconds": 1.215
+  },
+  {
+    "case": "02",
+    "ok": false,
+    "status": 502,
+    "detail": "APIキーが受け付けられませんでした",
+    "wallSeconds": 0.195
+  },
+  {
+    "case": "03",
+    "ok": false,
+    "status": 502,
+    "detail": "APIキーが受け付けられませんでした",
+    "wallSeconds": 0.314
+  },
+  {
+    "case": "04",
+    "ok": false,
+    "status": 502,
+    "detail": "APIキーが受け付けられませんでした",
+    "wallSeconds": 0.185
+  },
+  {
+    "case": "05",
+    "ok": false,
+    "status": 502,
+    "detail": "APIキーが受け付けられませんでした",
+    "wallSeconds": 0.333
+  }
+]
