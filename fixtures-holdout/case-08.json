@@ -1,0 +1,113 @@
+{
+  "id": "08",
+  "title": "仙骨部の創の処置（架空）",
+  "subject": "利用者C",
+  "period": "2026年10月",
+  "records": [
+    {
+      "id": "R01",
+      "date": "2026-10-01",
+      "staffRole": "看護師",
+      "lines": [
+        "仙骨部に2cm×1.5cmの表皮剥離あり。",
+        "体位交換は家族が2時間ごとに行っていると家族より。",
+        "エアマットを使用中。"
+      ]
+    },
+    {
+      "id": "R02",
+      "date": "2026-10-08",
+      "staffRole": "看護師",
+      "lines": [
+        "仙骨部の創は1.8cm×1.2cm。",
+        "洗浄し、処方の軟膏を塗布した。",
+        "食事は半分程度と家族より。"
+      ]
+    },
+    {
+      "id": "R03",
+      "date": "2026-10-15",
+      "staffRole": "看護師",
+      "lines": [
+        "仙骨部の創は1.5cm×1.0cm、浸出液少量。",
+        "洗浄し、処方の軟膏を塗布した。",
+        "夜間の体位交換ができなかった日が1日あったと家族より。"
+      ]
+    }
+  ],
+  "draft": "仙骨部の創は2cm×1.5cmから1.5cm×1.0cmに小さくなった。10月8日と15日に、創を洗浄し処方の軟膏を塗布した。エアマットを使用中である。体位交換は家族が2時間ごとに欠かさず行っている。浸出液は少量だった。食事は半分程度と家族より。栄養状態の低下が創の治りを遅らせている。創の周りに感染の兆候はない。",
+  "expected": [
+    {
+      "sentenceId": "S01",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R01",
+        "R03"
+      ],
+      "evidenceQuote": "仙骨部の創は1.5cm×1.0cm",
+      "reason": "初回と最後の大きさをまとめている。"
+    },
+    {
+      "sentenceId": "S02",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R02",
+        "R03"
+      ],
+      "evidenceQuote": "洗浄し、処方の軟膏を塗布した",
+      "reason": "2回の処置をまとめている。"
+    },
+    {
+      "sentenceId": "S03",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "エアマットを使用中",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S04",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R01",
+        "R03"
+      ],
+      "evidenceQuote": "夜間の体位交換ができなかった日が1日あったと家族より",
+      "reason": "【境目】R03にできなかった日の記録があり、「欠かさず」と逆（離れた日の記録）。"
+    },
+    {
+      "sentenceId": "S05",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "浸出液少量",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S06",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R02"
+      ],
+      "evidenceQuote": "食事は半分程度と家族より",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S07",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "栄養状態と創の関係の評価は記録に見当たらない。"
+    },
+    {
+      "sentenceId": "S08",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "感染の兆候についての記載は見当たらない。"
+    }
+  ],
+  "savedJudgements": []
+}

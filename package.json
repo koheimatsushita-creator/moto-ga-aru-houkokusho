@@ -8,6 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "check:fixtures": "node scripts/check-fixtures.mjs",
+    "check:holdout": "node scripts/check-holdout.mjs",
     "check:review": "node scripts/check-review.mjs",
     "check:limits": "node scripts/check-limits.mjs",
     "check:postcheck": "node scripts/check-postcheck.mjs",

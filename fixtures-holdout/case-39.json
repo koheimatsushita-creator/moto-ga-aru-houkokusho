@@ -1,0 +1,110 @@
+{
+  "id": "39",
+  "title": "人工肛門の袋の漏れ（架空）",
+  "subject": "利用者D",
+  "period": "2026年9月",
+  "records": [
+    {
+      "id": "R01",
+      "date": "2026-09-05",
+      "staffRole": "看護師",
+      "lines": [
+        "夜中に袋の横から便が漏れたと本人より。",
+        "袋を貼る前に皮膚のしわを伸ばす方法を伝えた。",
+        "皮膚にかぶれなし。"
+      ]
+    },
+    {
+      "id": "R02",
+      "date": "2026-09-12",
+      "staffRole": "看護師",
+      "lines": [
+        "漏れは1回あったと本人より。",
+        "腹部のくぼみを埋める練り状の保護剤を使い始めた。"
+      ]
+    },
+    {
+      "id": "R03",
+      "date": "2026-09-19",
+      "staffRole": "看護師",
+      "lines": [
+        "漏れはなかったと本人より。",
+        "袋の交換を本人が一人で行えた。",
+        "皮膚にかぶれなし。"
+      ]
+    }
+  ],
+  "draft": "夜中に袋の横から便が漏れたと本人より。袋を貼る前に皮膚のしわを伸ばす方法を伝えた。漏れは、練り状の保護剤を使い始めた次の訪問ではなかったと本人は話す。練り状の保護剤で漏れが止まった。袋の交換は本人が一人で行えた。皮膚にかぶれがあり、軟膏を塗った。9月12日の時点で漏れはもうなかった。本人は袋の扱いに慣れてきたと感じている。",
+  "expected": [
+    {
+      "sentenceId": "S01",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "夜中に袋の横から便が漏れたと本人より",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S02",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "袋を貼る前に皮膚のしわを伸ばす方法を伝えた",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S03",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R02",
+        "R03"
+      ],
+      "evidenceQuote": "漏れはなかったと本人より",
+      "reason": "2回の記録を順にまとめている。"
+    },
+    {
+      "sentenceId": "S04",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "【境目】使い始めた後に漏れが無かった事実だけで、保護剤の効果の判断は見当たらない（事実に因果を足した）。"
+    },
+    {
+      "sentenceId": "S05",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "袋の交換を本人が一人で行えた",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S06",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "皮膚にかぶれなし",
+      "reason": "記録ではかぶれなし。"
+    },
+    {
+      "sentenceId": "S07",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R02"
+      ],
+      "evidenceQuote": "漏れは1回あったと本人より",
+      "reason": "【境目】記録では9月12日にも漏れが1回あった。"
+    },
+    {
+      "sentenceId": "S08",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "本人の気持ちの記載は見当たらない。"
+    }
+  ],
+  "savedJudgements": []
+}

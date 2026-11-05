@@ -1,0 +1,130 @@
+{
+  "id": "13",
+  "title": "胃ろうからの栄養（架空）",
+  "subject": "利用者C",
+  "period": "2026年10月",
+  "records": [
+    {
+      "id": "R01",
+      "date": "2026-10-02",
+      "staffRole": "看護師",
+      "lines": [
+        "胃ろうから栄養剤を1日3回注入している。",
+        "注入は家族が行っている。",
+        "胃ろうの周りに発赤なし。"
+      ]
+    },
+    {
+      "id": "R02",
+      "date": "2026-10-09",
+      "staffRole": "看護師",
+      "lines": [
+        "注入中にむせ込みはなかった。",
+        "胃ろうの周りに少量の浸出液あり、ガーゼで保護した。",
+        "体重45.2kg。"
+      ]
+    },
+    {
+      "id": "R03",
+      "date": "2026-10-16",
+      "staffRole": "看護師",
+      "lines": [
+        "胃ろうの周りの浸出液は無くなった。",
+        "白湯を1回200mlで1日3回注入していると家族より。",
+        "体重45.0kg。"
+      ]
+    },
+    {
+      "id": "R04",
+      "date": "2026-10-23",
+      "staffRole": "言語聴覚士",
+      "lines": [
+        "とろみをつけたお茶を3口飲み込めた。",
+        "飲み込みの後に声のかすれがあった。"
+      ]
+    }
+  ],
+  "draft": "胃ろうから栄養剤を1日3回注入しており、家族が行っている。胃ろうの周りに少量の浸出液があったが、その後は無くなった。白湯は1回200mlを1日3回注入していると家族より。白湯は1回150mlで注入している。体重は45.2kgから45.0kgになった。注入の後に下痢はない。とろみをつけたお茶を3口飲み込めた。飲み込みの後も声の変化は見られなかった。近いうちに口からの食事に戻せる見込みである。",
+  "expected": [
+    {
+      "sentenceId": "S01",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R01"
+      ],
+      "evidenceQuote": "胃ろうから栄養剤を1日3回注入している",
+      "reason": "同じ日の2行をまとめている。"
+    },
+    {
+      "sentenceId": "S02",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R02",
+        "R03"
+      ],
+      "evidenceQuote": "胃ろうの周りの浸出液は無くなった",
+      "reason": "2回の記録をまとめている。"
+    },
+    {
+      "sentenceId": "S03",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "白湯を1回200mlで1日3回注入していると家族より",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S04",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R03"
+      ],
+      "evidenceQuote": "白湯を1回200mlで1日3回注入していると家族より",
+      "reason": "【境目】記録では200mlで、量が食い違う（数値の小さな食い違い）。"
+    },
+    {
+      "sentenceId": "S05",
+      "verdict": "言い換え",
+      "evidenceIds": [
+        "R02",
+        "R03"
+      ],
+      "evidenceQuote": "体重45.0kg",
+      "reason": "2回の値をまとめている。"
+    },
+    {
+      "sentenceId": "S06",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "下痢についての記載は見当たらない。"
+    },
+    {
+      "sentenceId": "S07",
+      "verdict": "一致",
+      "evidenceIds": [
+        "R04"
+      ],
+      "evidenceQuote": "とろみをつけたお茶を3口飲み込めた",
+      "reason": "記録と同じ内容。"
+    },
+    {
+      "sentenceId": "S08",
+      "verdict": "反する",
+      "evidenceIds": [
+        "R04"
+      ],
+      "evidenceQuote": "飲み込みの後に声のかすれがあった",
+      "reason": "記録では声のかすれがあった。"
+    },
+    {
+      "sentenceId": "S09",
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "見通しの記載は見当たらない。"
+    }
+  ],
+  "savedJudgements": []
+}
