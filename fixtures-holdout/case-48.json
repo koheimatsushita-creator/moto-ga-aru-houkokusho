@@ -75,12 +75,10 @@
     },
     {
       "sentenceId": "S04",
-      "verdict": "言い換え",
-      "evidenceIds": [
-        "R03"
-      ],
-      "evidenceQuote": "足だけお湯につけた",
-      "reason": "同じ日の2行をまとめている。"
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "足をお湯につけた記録はR03の1回だけで、同じく入浴を断ったR01には記載が無く、断った日すべてとは言えない。"
     },
     {
       "sentenceId": "S05",

@@ -48,13 +48,10 @@
     },
     {
       "sentenceId": "S02",
-      "verdict": "言い換え",
-      "evidenceIds": [
-        "R02",
-        "R03"
-      ],
-      "evidenceQuote": "室温27度、エアコンをつけていた",
-      "reason": "2回の記録をまとめている。"
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "エアコンをつけていた記録は8月11日だけで、その後も続けたという記載は見当たらない。"
     },
     {
       "sentenceId": "S03",

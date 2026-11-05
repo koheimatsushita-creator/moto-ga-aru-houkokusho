@@ -82,13 +82,10 @@
     },
     {
       "sentenceId": "S05",
-      "verdict": "言い換え",
-      "evidenceIds": [
-        "R02",
-        "R03"
-      ],
-      "evidenceQuote": "主治医に連絡し、水分を増やすよう指示があった",
-      "reason": "指示と、その後の水分の記録をまとめている。"
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "記録は水分を増やすよう指示があったことだけで、実際に増やしたという記載は見当たらない。"
     },
     {
       "sentenceId": "S06",

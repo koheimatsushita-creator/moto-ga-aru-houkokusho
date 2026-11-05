@@ -59,12 +59,13 @@
     },
     {
       "sentenceId": "S02",
-      "verdict": "一致",
+      "verdict": "反する",
       "evidenceIds": [
-        "R01"
+        "R01",
+        "R04"
       ],
-      "evidenceQuote": "鼻からのチューブでミルクを1回80ml、1日7回注入している",
-      "reason": "記録と同じ内容（10月25日に増える前）。"
+      "evidenceQuote": "ミルクが1回90mlに増えた",
+      "reason": "R04で1回90mlに増えており、今も80mlで注入しているとする文と食い違う。"
     },
     {
       "sentenceId": "S03",

@@ -95,12 +95,10 @@
     },
     {
       "sentenceId": "S06",
-      "verdict": "言い換え",
-      "evidenceIds": [
-        "R04"
-      ],
-      "evidenceQuote": "日中も眠っている時間が長い",
-      "reason": "同じ内容を言い換えている。"
+      "verdict": "根拠なし",
+      "evidenceIds": [],
+      "evidenceQuote": "",
+      "reason": "R04に日中も眠っている時間が長いとあるだけで、以前より多くなったという変化は記録に見当たらない。"
     },
     {
       "sentenceId": "S07",
