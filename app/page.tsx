@@ -19,7 +19,7 @@ export default async function Home() {
       </header>
 
       <section aria-labelledby="howto-title">
-        <h2 id="howto-title">使い方（3段）</h2>
+        <h2 id="howto-title">使い方</h2>
         <ol className="steps">
           <li><span>1</span>見本を開くと、左に訪問記録、右に下書きの文ごとの印（判定）が並びます</li>
           <li><span>2</span>赤い印の文を「記録の言葉に戻す／削る／確認して残す」から選んで直します。赤い印は誤りという意味ではなく、確認が要るという印です</li>
@@ -29,7 +29,7 @@ export default async function Home() {
 
       <section aria-labelledby="sample-title">
         <h2 id="sample-title">ほかの見本（架空の5組）</h2>
-        <p className="muted">どれもAIが前もって判定した結果を表示します。ログインは要りません。</p>
+        <p className="muted">どれもAIが前もって印を付けた結果を表示します。ログインは要りません。</p>
         <ul className="cases">
           {fixtureCases.map((c) => (
             <li key={c.id}>

@@ -87,8 +87,9 @@ h2 { font-size: 1.15rem; margin: 40px 0 12px; padding-bottom: 6px; border-bottom
 .names label span { font-size: .85rem; color: var(--muted); }
 .issue-bar { position: sticky; bottom: 0; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-top: 24px; padding: 12px 16px; background: var(--bg); border-top: 1px solid var(--line); }
 .issue-bar p { margin: 0; }
-.issue-bar button { border: 0; font: inherit; cursor: pointer; padding: 10px 32px; }
-.issue-bar button:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
+.issue-bar > button { border: 0; font: inherit; cursor: pointer; padding: 10px 32px; }
+.issue-bar .link-button { padding: 0 1px; }
+.issue-bar > button:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
 .guard { color: var(--red); font-weight: 600; }
 .button-sub { background: var(--card); color: var(--accent); border: 1px solid var(--accent) !important; }
 .issue-actions { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 16px; }
@@ -148,4 +149,9 @@ h2 { font-size: 1.15rem; margin: 40px 0 12px; padding-bottom: 6px; border-bottom
 .sentence, .record { scroll-margin: 80px 0; }
 @media (min-width: 761px) {
   .records-col { position: sticky; top: 8px; max-height: calc(100vh - 16px); overflow-y: auto; }
+}
+@media (max-width: 760px) {
+  .issue-bar { padding: 8px 12px; gap: 4px 12px; }
+  .issue-bar > button { padding: 8px 20px; }
+  .issue-bar p { font-size: .88rem; }
 }

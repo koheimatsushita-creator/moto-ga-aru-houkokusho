@@ -34,7 +34,7 @@ export default async function CheckPage({
         <p className="no-print"><Link href="/">← 入口へ戻る</Link></p>
         <h1 className="no-print">照合（実行モード）</h1>
         <p className="muted no-print">
-          架空の訪問記録と下書きを貼ると、AIの検査役が文ごとに判定します。入力は合わせて4,000字まで、全体で1日30回まで、同じ接続元からは1分に3回までです。
+          架空の訪問記録と下書きを貼ると、AIの検査役が文ごとに印（判定）を付けます。入力は合わせて4,000字まで、全体で1日30回まで、同じ接続元からは1分に3回までです。
         </p>
         <RunMode />
       </main>
@@ -66,7 +66,7 @@ export default async function CheckPage({
             </p>
             <p className="muted">
               {meta
-                ? `この見本の判定（文ごとに付いた印）は、AI（Claude）が${judgedDate(meta.judgedAt)}に行ったものを保存してあります。`
+                ? `この見本の印（判定）は、AI（Claude）が${judgedDate(meta.judgedAt)}に付けたものを保存してあります。`
                 : "この見本では、開発に使ったClaudeが付けた正解（看護の専門職は未確認）を表示しています。"}
               記録に無い＝誤りではなく、確認が要るという印です。
             </p>

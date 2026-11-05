@@ -98,11 +98,11 @@ export function ReviewFlow({
           <ul>
             <li>
               {redCount > 0
-                ? `赤い印の文（${isSample ? "この見本" : "今回"}では${redCount}件）を、出す前に必ず処理します。黄は任意です。`
+                ? `赤い印の文（${isSample ? "この見本" : "今回"}では${redCount}件）は、出す前に必ず『どうするか』を3つから選びます。黄は任意です。`
                 : `赤い印の文は${isSample ? "この見本" : "今回"}にはありません。黄は任意です。`}
             </li>
             <li>各文の下で「記録の言葉に戻す／削る／確認して残す」を選びます。選び直せます。</li>
-            <li>赤が0になったら、下の「出す」で検査記録ができます。</li>
+            <li>赤が0になったら、下の『出す』で検査記録ができます。</li>
           </ul>
         </div>
         {redCount > 0 && (
@@ -163,6 +163,7 @@ export function ReviewFlow({
 
       <section className="final-box" aria-labelledby="final-title">
         <h2 id="final-title">処理後の報告書</h2>
+        <p className="muted">選ぶたびに書き換わります。赤の文が残っている間は、まだ出せません。</p>
         <p className="final-text">{report || "（すべての文を削りました）"}</p>
       </section>
 
@@ -305,8 +306,8 @@ function NextSteps({ onBack, lead = false }: { onBack: () => void; lead?: boolea
       {lead && <p className="done-line">確認が終わりました。</p>}
       <div className="next-buttons">
         <button type="button" className="button" onClick={() => window.print()}>印刷する</button>
-        <button type="button" className="button button-sub" onClick={onBack}>照合の画面に戻る（選んだ処理は残っています）</button>
-        <Link href="/" className="button button-sub">別の見本を試す（入口へ）</Link>
+        <button type="button" className="button button-sub" onClick={onBack}>さっきの画面に戻る（選んだ内容は残っています）</button>
+        <Link href="/" className="button button-sub">別の見本を試す（入口へ。この記録は消えます）</Link>
       </div>
       {lead && <p className="muted">この記録は保存しません。</p>}
     </div>

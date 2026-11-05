@@ -80,7 +80,7 @@ export function RunMode() {
           title="実行モードで貼った内容"
           header={
             <p className="muted">
-              AI（Claude）が判定した結果です。記録に無い＝誤りではなく、確認が要るという印です。
+              AI（Claude）が印を付けた結果です。記録に無い＝誤りではなく、確認が要るという印です。
             </p>
           }
         />

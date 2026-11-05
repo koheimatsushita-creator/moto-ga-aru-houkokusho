@@ -58,10 +58,10 @@ export function JudgementView({
           })}
         </p>
         <p className="legend-line">
-          <span className="tag tag-red">赤</span>＝出す前に必ず処理／<span className="tag tag-yellow">黄</span>＝任意（未処理の件数が記録に残る）／<span className="tag">一致</span>＝そのまま
+          <span className="tag tag-red">赤</span>（根拠なし・反する）＝出す前に必ず選ぶ／<span className="tag tag-yellow">黄</span>（言い換え）＝任意（選ばなかった件数が記録に残る）／<span className="tag">一致</span>＝そのまま
         </p>
         <details className="legend-details">
-          <summary>4つの判定（AIが文ごとに付けた印）の意味</summary>
+          <summary>4つの印の意味</summary>
           <dl>
             {VERDICTS.map((v) => (
               <div key={v}>
@@ -85,7 +85,7 @@ export function JudgementView({
         </section>
 
         <section aria-labelledby="draft-title">
-          <h2 id="draft-title">下書きの文ごとの判定</h2>
+          <h2 id="draft-title">下書きの文ごとの印</h2>
           <ol className="sentences">
             {sentences.map((s) => {
               const j = judgements.find((x) => x.sentenceId === s.id);
@@ -94,7 +94,7 @@ export function JudgementView({
                 <li key={s.id} id={sentenceElementId(s.id)} className={`sentence v-${verdict}`}>
                   <div className="sentence-head">
                     <span className="sid">{s.id}</span>
-                    <span className={tagClass[verdict]}>{verdict}{j ? "" : "（未判定）"}</span>
+                    <span className={tagClass[verdict]}>{verdict}{j ? "" : "（AIの印なし）"}</span>
                     {j?.evidenceIds.map((id) => (
                       <a
                         key={id}
