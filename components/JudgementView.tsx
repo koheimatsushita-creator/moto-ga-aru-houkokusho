@@ -26,11 +26,13 @@ export function JudgementView({
   sentences,
   judgements,
   renderExtra,
+  isSample = false,
 }: {
   records: VisitRecord[];
   sentences: Sentence[];
   judgements: Judgement[];
   renderExtra?: (s: Sentence, j: Judgement | undefined) => ReactNode; // 文の札の下に足す物（処理の選択など）
+  isSample?: boolean;
 }) {
   const verdictOf = (s: Sentence): Verdict => judgements.find((j) => j.sentenceId === s.id)?.verdict ?? "根拠なし";
   const counts = new Map<Verdict, number>();
@@ -76,6 +78,10 @@ export function JudgementView({
       <div className="check-grid">
         <section aria-labelledby="records-title" className="records-col">
           <h2 id="records-title">訪問記録</h2>
+          <p className="col-note">
+            現場では、記録ソフト（外のサービス）にある1か月分の訪問看護記録書Ⅱを、人がコピーして貼る欄です。記録ソフトとはつながっていません。
+            {isSample && "見本は架空の記録を最初から入れてあります。"}
+          </p>
           {records.map((r) => (
             <article key={r.id} id={recordElementId(r.id)} className="record">
               <h3><span className="rec-id">{r.id}</span>{[r.date, r.staffRole].filter(Boolean).join("・")}</h3>
@@ -86,6 +92,9 @@ export function JudgementView({
 
         <section aria-labelledby="draft-title">
           <h2 id="draft-title">下書きの文ごとの印</h2>
+          <p className="col-note">
+            下書きは、生成AIなどで別に書いた物を貼ります（この道具は下書きを書きません）。『。』と改行でプログラムが文に分け、S01から番号を付けます。
+          </p>
           <ol className="sentences">
             {sentences.map((s) => {
               const j = judgements.find((x) => x.sentenceId === s.id);

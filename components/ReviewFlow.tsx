@@ -14,7 +14,7 @@ const ROLES = ["管理者", "経営者"] as const;
 function actionHint(action: Decision["action"], j: Judgement): string {
   if (action === "戻す") return `記録の文「${j.evidenceQuote.replace(/\s*\n\s*/g, "")}」に差し替えます`;
   if (action === "削る") return "この文を報告書から消します";
-  return "理由を書いて、この文をそのまま残します";
+  return "理由を書いて、この文をそのまま残します（記録の書き漏れなら、先に記録を直す方が確実です）";
 }
 
 // 文の番号を押すと、その文へ移動する
@@ -117,6 +117,7 @@ export function ReviewFlow({
       </section>
 
       <JudgementView
+        isSample={isSample}
         records={records}
         sentences={sentences}
         judgements={judgements}
@@ -196,7 +197,7 @@ export function ReviewFlow({
           {reviewerMissing && <p className="guard">確認者の名前が空です。</p>}
           {g.canIssue && redCount > 0 && <p className="done">赤の文は処理済みです。出せます</p>}
           {g.yellowPending.length > 0 && (
-            <p className="muted">黄色の文は処理しなくても出せます。処理しなかった件数は、検査記録に『未処理{g.yellowPending.length}件』と残ります。</p>
+            <p className="muted">黄色の文は処理しなくても出せます。処理しなかった件数は、検査記録に『そのまま残した言い換え：{g.yellowPending.length}件』と残ります。</p>
           )}
         </div>
       </section>
@@ -240,6 +241,7 @@ function IssueRecord({
     const v = judgementFor(s.id, judgements).verdict;
     counts.set(v, (counts.get(v) ?? 0) + 1);
   }
+  const machineFixed = sentences.filter((s) => judgementFor(s.id, judgements).machineNote).length;
   const judgedAt = meta ? new Date(meta.judgedAt).toLocaleString("ja-JP", { dateStyle: "long", timeStyle: "short" }) : "";
 
   return (
@@ -257,6 +259,10 @@ function IssueRecord({
         <dt>日時</dt><dd>{issuedAt}</dd>
         <dt>判定</dt>
         <dd>{meta ? `AIの検査役（${meta.model}）が ${judgedAt} に判定` : "開発に使ったClaudeが付けた正解（AIの検査役の判定は未保存）"}</dd>
+        <dt>サーバー側の検査で直した文</dt>
+        <dd>
+          {machineFixed}件{machineFixed === 0 && meta && "（引用はすべて記録に一字一句ありました）"}
+        </dd>
       </dl>
 
       <h2>判定ごとの件数</h2>
@@ -264,7 +270,7 @@ function IssueRecord({
         <thead><tr>{VERDICTS.map((v) => <th key={v}>{v}</th>)}</tr></thead>
         <tbody><tr>{VERDICTS.map((v) => <td key={v}>{counts.get(v) ?? 0}</td>)}</tr></tbody>
       </table>
-      <p>黄（言い換え）の未処理：{yellowPending}件</p>
+      <p>黄（言い換え）をそのまま残した数：{yellowPending}件</p>
 
       <h2>文ごとの判定と処理</h2>
       <ol className="record-sentences">
@@ -280,7 +286,7 @@ function IssueRecord({
               </p>
               <p>文：{s.text}</p>
               <p>
-                処理：{needsDecision(j.verdict) ? (d ? ACTION_LABEL[d.action] : "未処理") : "処理なし（一致）"}
+                処理：{needsDecision(j.verdict) ? (d ? ACTION_LABEL[d.action] : "そのまま") : "処理なし（一致）"}
                 {d?.action === "戻す" && `（戻した後の文：「${processedText(s, j, d)}」）`}
               </p>
               {d?.action === "残す" && <p>理由：{d.reason}</p>}
@@ -304,6 +310,7 @@ function NextSteps({ onBack, lead = false }: { onBack: () => void; lead?: boolea
   return (
     <div className="no-print next-steps">
       {lead && <p className="done-line">確認が終わりました。</p>}
+      {lead && <p>主治医への提出はまだです。直した本文は、記録ソフトの報告書の欄に貼って出します。</p>}
       <div className="next-buttons">
         <button type="button" className="button" onClick={() => window.print()}>印刷する</button>
         <button type="button" className="button button-sub" onClick={onBack}>さっきの画面に戻る（選んだ内容は残っています）</button>

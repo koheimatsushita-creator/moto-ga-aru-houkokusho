@@ -70,6 +70,17 @@ export default async function CheckPage({
                 : "この見本では、開発に使ったClaudeが付けた正解（看護の専門職は未確認）を表示しています。"}
               記録に無い＝誤りではなく、確認が要るという印です。
             </p>
+            {meta && (
+              <details className="claude-did no-print">
+                <summary>Claudeがしたこと／していないこと</summary>
+                <p>
+                  <strong>したこと：</strong>訪問記録と番号つきの文だけを受け取り（下書きを書いたやり取りは渡さない）、文ごとに判定・根拠の記録番号・記録からの引用・理由を、決めた形で返した（{meta.model}、{judgedDate(meta.judgedAt)}）。
+                </p>
+                <p>
+                  <strong>していないこと：</strong>文を分ける（プログラム）／引用が記録に一字一句あるかの確かめ（サーバー側の検査）／出すかどうかの判断（人）。
+                </p>
+              </details>
+            )}
           </>
         }
       />

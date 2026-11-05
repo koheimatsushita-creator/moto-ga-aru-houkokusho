@@ -155,3 +155,26 @@ h2 { font-size: 1.15rem; margin: 40px 0 12px; padding-bottom: 6px; border-bottom
   .issue-bar > button { padding: 8px 20px; }
   .issue-bar p { font-size: .88rem; }
 }
+
+/* 流れの帯・出どころの注記（11/5 午後） */
+.lead-sub { margin: 4px 0 0; font-size: .9rem; }
+.flow { margin-top: 8px; }
+.flow-row { margin: 10px 0; padding: 8px 12px 10px; border: 2px solid var(--accent); border-radius: 8px; background: var(--card); }
+.flow-row h3 { margin: 0 0 6px; font-size: .95rem; }
+.flow-future { border-style: dashed; border-color: var(--muted); background: transparent; }
+.flow-badge { display: inline-block; margin-left: 6px; padding: 0 8px; border: 1px solid var(--muted); border-radius: 999px; font-size: .78rem; font-weight: 400; color: var(--muted); }
+.flow-steps { list-style: none; margin: 0; padding: 0; display: flex; align-items: stretch; gap: 4px; }
+.flow-step { flex: 1 1 0; min-width: 0; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); font-size: .85rem; line-height: 1.5; overflow-wrap: anywhere; }
+.flow-future .flow-step { border-style: dashed; }
+.flow-arrow { flex: none; align-self: center; color: var(--muted); }
+.flow-arrow::before { content: "→"; }
+.flow-aside { margin: 6px 0 0; font-size: .85rem; }
+@media (max-width: 760px) {
+  .flow-steps { flex-direction: column; }
+  .flow-step { flex: none; }
+  .flow-arrow::before { content: "↓"; }
+}
+.col-note { margin: -4px 0 10px; font-size: .82rem; color: var(--muted); line-height: 1.6; }
+.claude-did { margin: 4px 0 8px; font-size: .88rem; }
+.claude-did summary { cursor: pointer; color: var(--accent); }
+.claude-did p { margin: 4px 0; }

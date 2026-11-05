@@ -1,6 +1,34 @@
 import Link from "next/link";
+import { Fragment } from "react";
 import { fixtureCases } from "@/lib/fixtures";
 import { runModeOpenNow } from "@/lib/runModeServer";
+
+// 入口の「流れ」の帯。上段はこの公開版でできること、下段は現場で使う時の流れ（この版では作っていない）
+const FLOW_NOW = [
+  "架空の見本（記録と下書きは最初から入っている）",
+  "Claude（検査役）が文ごとに記録と見比べて印を付ける（見本では済んだ結果を表示）",
+  "赤い文を人が処理",
+  "検査記録を印刷",
+];
+const FLOW_FIELD = [
+  "記録ソフト（外のサービス）にある1か月分の訪問記録 と 生成AIで書いた下書き",
+  "人がコピーして貼る（いまは貼り付けだけ。記録ソフトとの自動の取り込みは無い）",
+  "照合・処理",
+  "検査記録",
+];
+
+function FlowSteps({ steps }: { steps: string[] }) {
+  return (
+    <ol className="flow-steps">
+      {steps.map((step, i) => (
+        <Fragment key={step}>
+          {i > 0 && <li className="flow-arrow" aria-hidden="true" />}
+          <li className="flow-step">{step}</li>
+        </Fragment>
+      ))}
+    </ol>
+  );
+}
 
 export default async function Home() {
   const runOpen = await runModeOpenNow();
@@ -8,7 +36,10 @@ export default async function Home() {
     <main className="page">
       <header className="hero">
         <h1>もとがある報告書</h1>
-        <p className="lead">AIが書いた報告書の下書きを、訪問記録と文ごとに見比べ、記録に無い文に印を付けます</p>
+        <p className="lead">
+          訪問看護ステーションが毎月、主治医に出す『訪問看護報告書』。生成AIが書いた下書きを、1か月分の訪問記録と1文ずつ見比べ、記録に無い文に印を付けます。赤い印が残っている間は出せません。
+        </p>
+        <p className="muted lead-sub">下書きは、別の生成AIや人が書いた物を貼ります。この道具は下書きを書きません。</p>
         <p className="start">
           <Link href="/check?case=01" className="button button-big">見本01を開いて試す（約3分）</Link>
         </p>
@@ -17,6 +48,24 @@ export default async function Home() {
           {runOpen && "（実行モードでは、照合のため Anthropic社のAPIへ送ります）"}
         </p>
       </header>
+
+      <section className="flow" aria-labelledby="flow-title">
+        <h2 id="flow-title">流れ</h2>
+        <div className="flow-row">
+          <h3>この公開版でできること</h3>
+          <FlowSteps steps={FLOW_NOW} />
+        </div>
+        <div className="flow-row flow-future">
+          <h3>
+            現場で使う時の流れ <span className="flow-badge">この版では作っていません</span>
+          </h3>
+          <FlowSteps steps={FLOW_FIELD} />
+          <p className="muted flow-aside">報告書そのものは、記録ソフト側で主治医へ出します（この道具からは出しません）。</p>
+        </div>
+        <p className="muted">
+          本物の記録を扱うには、利用者を限った入口（ログイン）・氏名などを消す仕組み・個人情報の取り決めが別に要ります。公開版は見本だけです。
+        </p>
+      </section>
 
       <section aria-labelledby="howto-title">
         <h2 id="howto-title">使い方</h2>
@@ -58,7 +107,7 @@ export default async function Home() {
         <p className="muted run-closed-note">
           自分で文を貼ってAIに照合させる実行モードは、公開版では止めています。
           <br />
-          手元で動かす手順はREADMEにあります。
+          誰でも文を貼れる形は、本物の記録が入りうるため、認証なしでは公開しない決まりにしました。手元で動かす手順はREADMEにあります。
         </p>
       )}
 

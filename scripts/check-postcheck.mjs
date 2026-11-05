@@ -42,6 +42,20 @@ const v = (out, id) => out.find((j) => j.sentenceId === id);
   expect(!/[<>]/.test(safe) && safe.includes("＜/record＞＜record"), `B2 区切りの書き込みは山かっこを全角にして渡す →「${safe}」`);
 }
 {
+  // 記録に無い引用（記録番号は正しいが、引用の文が記録に無い）
+  const out = run([one("S04", "一致", ["R02"], "右下腿に浮腫あり、夜間は良眠。")]);
+  expect(v(out, "S04").verdict === "根拠なし", `B1 記録に無い引用の「一致」→ ${v(out, "S04").verdict}（${v(out, "S04").machineNote}）`);
+}
+{
+  // 文の欠け（AIが一部の文を返さなかった）
+  const out = run([one("S04", "一致", ["R02"], "右下腿に浮腫あり。")]);
+  const missing = ["S01", "S02", "S03"].map((id) => v(out, id));
+  expect(
+    out.length === sentences.length && missing.every((j) => j.verdict === "根拠なし" && j.machineNote === "未判定"),
+    `B1 返ってこなかった文 ${missing.length}件は「根拠なし（未判定）」になる`,
+  );
+}
+{
   // 引用が短すぎる
   const out = run([one("S04", "一致", ["R02"], "浮腫")]);
   expect(v(out, "S04").verdict === "根拠なし", `B1 2字の引用「浮腫」の「一致」→ ${v(out, "S04").verdict}`);
