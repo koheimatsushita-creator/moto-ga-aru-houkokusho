@@ -1,12 +1,37 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { JudgementView, tagClass } from "@/components/JudgementView";
-import { ACTION_LABEL, actionsFor, finalReport, guard, guardMessage, isRed, judgementFor, needsDecision, processedText } from "@/lib/review";
+import { jumpTo, sentenceElementId } from "@/lib/jump";
+import { ACTION_LABEL, actionsFor, finalReport, guard, isRed, judgementFor, needsDecision, processedText } from "@/lib/review";
 import type { Decision, Judgement, JudgeRunMeta, Sentence, Verdict, VisitRecord } from "@/lib/types";
 
 const VERDICTS: Verdict[] = ["一致", "言い換え", "根拠なし", "反する"];
 const ROLES = ["管理者", "経営者"] as const;
+
+// 選ぶ前から「選ぶとどうなるか」が分かるように、選択肢ごとに1行添える
+function actionHint(action: Decision["action"], j: Judgement): string {
+  if (action === "戻す") return `記録の文「${j.evidenceQuote.replace(/\s*\n\s*/g, "")}」に差し替えます`;
+  if (action === "削る") return "この文を報告書から消します";
+  return "理由を書いて、この文をそのまま残します";
+}
+
+// 文の番号を押すと、その文へ移動する
+function SentenceLinks({ ids }: { ids: string[] }) {
+  return (
+    <>
+      （
+      {ids.map((id, i) => (
+        <span key={id}>
+          {i > 0 && "・"}
+          <button type="button" className="link-button" onClick={() => jumpTo(sentenceElementId(id))}>{id}</button>
+        </span>
+      ))}
+      ）
+    </>
+  );
+}
 
 // 照合 → 文ごとの処理 → 出す（検査記録）。状態は画面の中だけに持ち、保存しない。
 export function ReviewFlow({
@@ -38,6 +63,8 @@ export function ReviewFlow({
   const reviewerMissing = !isSample && !reviewer.trim();
   const canIssue = g.canIssue && !reviewerMissing;
   const report = finalReport(sentences, judgements, decisions);
+  const redCount = sentences.filter((s) => isRed(judgementFor(s.id, judgements).verdict)).length;
+  const firstRedPending = g.redPending[0] ?? g.reasonMissing[0];
 
   function choose(sentenceId: string, action: Decision["action"]) {
     setDecisions((prev) => ({ ...prev, [sentenceId]: { sentenceId, action, reason: prev[sentenceId]?.reason } }));
@@ -65,14 +92,28 @@ export function ReviewFlow({
   return (
     <>
       {header}
-      <section className="howto-box" aria-labelledby="howto-review">
-        <h2 id="howto-review">この画面の使い方</h2>
-        <ol>
-          <li>黄（言い換え）と赤（根拠なし・反する）の文ごとに、「記録の言葉に戻す」「削る」「確認して残す」から選びます。選んだ後でも選び直せます。</li>
-          <li>「確認して残す」を選んだ時は、残す理由を書きます（例：記録の書き漏れ。別の記録で確認済み）。</li>
-          <li>赤の文がすべて処理され、理由が埋まると「出す」を押せます。黄は未処理でも出せますが、件数が検査記録に残ります。</li>
-          <li>「出す」を押すと検査記録が出ます。ブラウザの印刷で紙に出せます。入力した内容は保存しません。</li>
-        </ol>
+      <section className="todo-box" aria-labelledby="todo-title">
+        <div>
+          <h2 id="todo-title">この画面ですること</h2>
+          <ul>
+            <li>
+              {redCount > 0
+                ? `赤い印の文（${isSample ? "この見本" : "今回"}では${redCount}件）を、出す前に必ず処理します。黄は任意です。`
+                : `赤い印の文は${isSample ? "この見本" : "今回"}にはありません。黄は任意です。`}
+            </li>
+            <li>各文の下で「記録の言葉に戻す／削る／確認して残す」を選びます。選び直せます。</li>
+            <li>赤が0になったら、下の「出す」で検査記録ができます。</li>
+          </ul>
+        </div>
+        {redCount > 0 && (
+          <button
+            type="button"
+            className="button"
+            onClick={() => jumpTo(sentenceElementId(firstRedPending ?? sentences.find((s) => isRed(judgementFor(s.id, judgements).verdict))!.id))}
+          >
+            {firstRedPending ? "最初の赤い文へ" : "赤い文へ（処理済み）"}
+          </button>
+        )}
       </section>
 
       <JudgementView
@@ -87,11 +128,14 @@ export function ReviewFlow({
           return (
             <div className={`decision ${d ? "decided" : isRed(j.verdict) ? "pending-red" : "pending"}`}>
               <fieldset>
-                <legend>この文の処理{isRed(j.verdict) ? "（必須）" : ""}</legend>
+                <legend>この文をどうしますか{isRed(j.verdict) ? "（赤：必須）" : "（黄：任意）"}</legend>
                 {actionsFor(j).map((a) => (
                   <label key={a} className="choice">
                     <input type="radio" name={`d-${s.id}`} value={a} checked={d?.action === a} onChange={() => choose(s.id, a)} />
-                    {ACTION_LABEL[a]}
+                    <span>
+                      <span className="choice-label">{ACTION_LABEL[a]}</span>
+                      <span className="choice-hint">{actionHint(a, j)}</span>
+                    </span>
                   </label>
                 ))}
               </fieldset>
@@ -124,6 +168,9 @@ export function ReviewFlow({
 
       <section className="names-box" aria-labelledby="names-title">
         <h2 id="names-title">検査記録に載せる名前</h2>
+        <p className="muted">
+          誰が確認したかを検査記録に残します（{isSample ? "架空の名前のまま進めて構いません" : "架空の名前だけを入れてください"}）。
+        </p>
         <div className="names">
           <label><span>作成者</span><input type="text" value={creator} onChange={(e) => setCreator(e.target.value)} /></label>
           <label><span>確認者</span><input type="text" value={reviewer} onChange={(e) => setReviewer(e.target.value)} /></label>
@@ -134,16 +181,22 @@ export function ReviewFlow({
             </select>
           </label>
         </div>
-        <p className="muted">架空の名前だけを入れてください。</p>
       </section>
 
       <section className="issue-bar" aria-live="polite">
         <button type="button" className="button" onClick={issue} disabled={!canIssue}>出す</button>
         <div>
-          {guardMessage(g).map((m) => <p key={m} className="guard">{m}</p>)}
+          {g.redPending.length > 0 && (
+            <p className="guard">赤の文 あと{g.redPending.length}件<SentenceLinks ids={g.redPending} /></p>
+          )}
+          {g.reasonMissing.length > 0 && (
+            <p className="guard">「確認して残す」の理由が空 あと{g.reasonMissing.length}件<SentenceLinks ids={g.reasonMissing} /></p>
+          )}
           {reviewerMissing && <p className="guard">確認者の名前が空です。</p>}
-          {g.canIssue && <p className="muted">赤の文はすべて処理されました。</p>}
-          {g.yellowPending.length > 0 && <p className="muted">黄の未処理{g.yellowPending.length}件は、件数を検査記録に残します。</p>}
+          {g.canIssue && redCount > 0 && <p className="done">赤の文は処理済みです。出せます</p>}
+          {g.yellowPending.length > 0 && (
+            <p className="muted">黄色の文は処理しなくても出せます。処理しなかった件数は、検査記録に『未処理{g.yellowPending.length}件』と残ります。</p>
+          )}
         </div>
       </section>
     </>
@@ -190,11 +243,7 @@ function IssueRecord({
 
   return (
     <article className="issue-record">
-      <div className="no-print issue-actions">
-        <button type="button" className="button button-sub" onClick={onBack}>照合の画面に戻る</button>
-        <button type="button" className="button" onClick={() => window.print()}>印刷する</button>
-        <p className="muted">戻ると、選んだ処理はそのまま残っています。この記録は保存しません。</p>
-      </div>
+      <NextSteps onBack={onBack} lead />
 
       {isSample && <p className="sample-badge">架空の見本</p>}
       <h1>検査記録</h1>
@@ -243,6 +292,23 @@ function IssueRecord({
       <p className="final-text">{report || "（すべての文を削りました）"}</p>
 
       {isSample && <p className="sample-badge">架空の見本</p>}
+
+      <NextSteps onBack={onBack} />
     </article>
+  );
+}
+
+// 出した後にできること。検査記録の先頭と末尾に同じ物を置く（印刷には出さない）
+function NextSteps({ onBack, lead = false }: { onBack: () => void; lead?: boolean }) {
+  return (
+    <div className="no-print next-steps">
+      {lead && <p className="done-line">確認が終わりました。</p>}
+      <div className="next-buttons">
+        <button type="button" className="button" onClick={() => window.print()}>印刷する</button>
+        <button type="button" className="button button-sub" onClick={onBack}>照合の画面に戻る（選んだ処理は残っています）</button>
+        <Link href="/" className="button button-sub">別の見本を試す（入口へ）</Link>
+      </div>
+      {lead && <p className="muted">この記録は保存しません。</p>}
+    </div>
   );
 }

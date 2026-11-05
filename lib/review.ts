@@ -70,10 +70,3 @@ export function guard(sentences: Sentence[], judgements: Judgement[], decisions:
   }
   return { redPending, reasonMissing, yellowPending, canIssue: redPending.length === 0 && reasonMissing.length === 0 };
 }
-
-export function guardMessage(g: Guard): string[] {
-  const lines: string[] = [];
-  if (g.redPending.length) lines.push(`赤の文があと${g.redPending.length}件、処理されていません（${g.redPending.join("・")}）。`);
-  if (g.reasonMissing.length) lines.push(`「確認して残す」の理由があと${g.reasonMissing.length}件、空です（${g.reasonMissing.join("・")}）。`);
-  return lines;
-}

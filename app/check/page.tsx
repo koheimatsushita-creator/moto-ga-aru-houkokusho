@@ -6,6 +6,10 @@ import { runModeOpenNow } from "@/lib/runModeServer";
 import { splitSentences } from "@/lib/split";
 import { RunMode } from "./RunMode";
 
+// 「2026年11月4日」の形（日本時間）
+const judgedDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
+
 export default async function CheckPage({
   searchParams,
 }: {
@@ -19,7 +23,7 @@ export default async function CheckPage({
       <main className="page">
         <p><Link href="/">← 入口へ戻る</Link></p>
         <h1>照合（実行モード）</h1>
-        <RunModeClosed showSampleLink />
+        <RunModeClosed />
       </main>
     );
   }
@@ -60,10 +64,10 @@ export default async function CheckPage({
             <p className="muted">
               {c.subject}・{c.period}・訪問記録{c.records.length}件・下書き{sentences.length}文
             </p>
-            <p className="source-note">
+            <p className="muted">
               {meta
-                ? `AIの検査役（${meta.model}）が ${meta.judgedAt.slice(0, 10)} に実際に判定し、保存しておいた結果です。`
-                : "AIの検査役の結果はまだ保存していません。いまは開発に使ったClaudeが付けた正解（看護の専門職は未確認）を表示しています。"}
+                ? `この見本の判定（文ごとに付いた印）は、AI（Claude）が${judgedDate(meta.judgedAt)}に行ったものを保存してあります。`
+                : "この見本では、開発に使ったClaudeが付けた正解（看護の専門職は未確認）を表示しています。"}
               記録に無い＝誤りではなく、確認が要るという印です。
             </p>
           </>
