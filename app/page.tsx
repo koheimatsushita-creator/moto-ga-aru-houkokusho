@@ -36,7 +36,8 @@ export default async function Home() {
   return (
     <main className="page">
       <header className="hero">
-        <h1>もとがある報告書</h1>
+        <h1 className="brand">URADORI</h1>
+        <p className="brand-reading">ウラドリ ＝ 裏取り</p>
         <p className="lead">
           訪問看護ステーションが毎月、主治医に出す『訪問看護報告書』。生成AIが書いた下書きを、1か月分の訪問記録と1文ずつ見比べ、記録に無い文に印を付けます。赤い印が残っている間は出せません。
         </p>

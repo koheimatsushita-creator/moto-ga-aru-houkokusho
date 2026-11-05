@@ -201,3 +201,7 @@ h2 { font-size: 1.15rem; margin: 40px 0 12px; padding-bottom: 6px; border-bottom
 @media (max-width: 760px) {
   .step-bar li { flex-basis: 45%; }
 }
+
+/* 名前 URADORI（11/5） */
+.brand { margin-bottom: 0; font-family: "Helvetica Neue", Arial, "Hiragino Sans", sans-serif; font-weight: 800; letter-spacing: .08em; }
+.brand-reading { margin: 0 0 10px; font-size: .85rem; color: var(--muted); }
