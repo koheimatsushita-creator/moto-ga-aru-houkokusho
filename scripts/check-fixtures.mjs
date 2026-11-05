@@ -5,6 +5,8 @@
 // 使い方: npm run check:fixtures
 import { readFileSync, readdirSync } from "node:fs";
 import { splitSentences } from "../lib/split.ts";
+import { parseRecords } from "../lib/parseRecords.ts";
+import { serializeRecords } from "../lib/samples.ts";
 
 const dir = new URL("../fixtures/", import.meta.url);
 const files = readdirSync(dir).filter((f) => /^case-\d+\.json$/.test(f)).sort();
@@ -31,6 +33,11 @@ for (const file of files) {
     if ((j.verdict === "根拠なし") !== (j.evidenceIds.length === 0)) {
       fail(file, `${j.sentenceId} の判定と記録番号の有無が合わない`);
     }
+  }
+  // 貼り付けの書式に直し、画面と同じ parseRecords で読み直すと元に戻るか
+  const back = parseRecords(serializeRecords(c.records));
+  if (JSON.stringify(back) !== JSON.stringify(c.records.map(({ id, date, staffRole, lines }) => ({ id, date, staffRole, lines })))) {
+    fail(file, "貼り付けの書式に直して読み直すと、元の記録に戻らない");
   }
   const all = [c.draft, ...c.records.flatMap((r) => r.lines)].join("\n");
   if (phoneLike.test(all)) fail(file, "電話番号・郵便番号の形がある");

@@ -1,15 +1,11 @@
 import Link from "next/link";
-import { ReviewFlow } from "@/components/ReviewFlow";
 import { RunModeClosed } from "@/components/RunModeClosed";
 import { fixtureCases } from "@/lib/fixtures";
 import { runModeOpenNow } from "@/lib/runModeServer";
-import { splitSentences } from "@/lib/split";
+import { serializeRecords } from "@/lib/samples";
 import { RunMode } from "./RunMode";
 
-// 「2026年11月4日」の形（日本時間）
-const judgedDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "long", day: "numeric" });
-
+// 照合の画面。見本を選んだ時も、結果からではなく「貼る→照合する」の手順から始める。
 export default async function CheckPage({
   searchParams,
 }: {
@@ -17,12 +13,13 @@ export default async function CheckPage({
 }) {
   const { case: caseId } = await searchParams;
   const c = fixtureCases.find((f) => f.id === caseId);
+  const runOpen = await runModeOpenNow();
 
-  if (!c && !(await runModeOpenNow())) {
+  if (!c && !runOpen) {
     return (
       <main className="page">
         <p><Link href="/">← 入口へ戻る</Link></p>
-        <h1>照合（実行モード）</h1>
+        <h1>照合</h1>
         <RunModeClosed />
       </main>
     );
@@ -36,54 +33,20 @@ export default async function CheckPage({
         <p className="muted no-print">
           架空の訪問記録と下書きを貼ると、AIの検査役が文ごとに印（判定）を付けます。入力は合わせて4,000字まで、全体で1日30回まで、同じ接続元からは1分に3回までです。
         </p>
-        <RunMode />
+        <RunMode runOpen={runOpen} />
       </main>
     );
   }
 
-  // 検査役を回した結果があればそれを、無ければ正解（expected）を表示する（どちらかを画面に明記する）。
-  const fromSaved = c.savedJudgements.length > 0;
-  const sentences = splitSentences(c.draft);
-
-  const meta = fromSaved && c.savedMeta ? c.savedMeta : null;
-
   return (
     <main className="page page-wide">
-      <ReviewFlow
-        records={c.records}
-        sentences={sentences}
-        judgements={fromSaved ? c.savedJudgements : c.expected}
-        meta={meta}
-        isSample
-        title={`見本${c.id}：${c.title}`}
-        header={
-          <>
-            <p className="no-print"><Link href="/">← 入口へ戻る</Link></p>
-            <p className="sample-badge">架空の見本</p>
-            <h1>見本{c.id}：{c.title}</h1>
-            <p className="muted">
-              {c.subject}・{c.period}・訪問記録{c.records.length}件・下書き{sentences.length}文
-            </p>
-            <p className="muted">
-              {meta
-                ? `この見本の印（判定）は、AI（Claude）が${judgedDate(meta.judgedAt)}に付けたものを保存してあります。`
-                : "この見本では、開発に使ったClaudeが付けた正解（看護の専門職は未確認）を表示しています。"}
-              記録に無い＝誤りではなく、確認が要るという印です。
-            </p>
-            {meta && (
-              <details className="claude-did no-print">
-                <summary>Claudeがしたこと／していないこと</summary>
-                <p>
-                  <strong>したこと：</strong>訪問記録と番号つきの文だけを受け取り（下書きを書いたやり取りは渡さない）、文ごとに判定・根拠の記録番号・記録からの引用・理由を、決めた形で返した（{meta.model}、{judgedDate(meta.judgedAt)}）。
-                </p>
-                <p>
-                  <strong>していないこと：</strong>文を分ける（プログラム）／引用が記録に一字一句あるかの確かめ（サーバー側の検査）／出すかどうかの判断（人）。
-                </p>
-              </details>
-            )}
-          </>
-        }
-      />
+      <p className="no-print"><Link href="/">← 入口へ戻る</Link></p>
+      <p className="sample-badge no-print">架空の見本</p>
+      <h1 className="no-print">見本{c.id}：{c.title}</h1>
+      <p className="muted no-print">
+        {c.subject}・{c.period}・訪問記録{c.records.length}件。照合（記録と下書きを1文ずつ見比べること）を、貼るところから試せます。
+      </p>
+      <RunMode runOpen={runOpen} sample={{ id: c.id, title: c.title, recordText: serializeRecords(c.records), draft: c.draft }} />
     </main>
   );
 }

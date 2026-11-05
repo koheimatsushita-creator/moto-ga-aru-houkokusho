@@ -1,16 +1,15 @@
 import Link from "next/link";
-import { RUN_MODE_CLOSED_MESSAGE } from "@/lib/runMode";
 
 // 実行モードを閉じている時に /check（見本を選ばずに開いた時）で出す説明。押せないボタンは置かない。
 export function RunModeClosed() {
   return (
     <div className="closed-box">
-      <p><strong>{RUN_MODE_CLOSED_MESSAGE}</strong></p>
+      <p><strong>公開版では、見本の文だけ照合できます（AIを呼ばないためです）。</strong></p>
       <p>
-        見本5組では、AIが前もって印を付けた結果を使って、照合・文ごとの処理・出す（検査記録の印刷）まで一通り試せます。
+        見本を開くと、①訪問記録と②下書きの欄に架空の文が入っています。「照合する」を押すと、同じ文に対して前もって付けた判定が出て、赤い文の処理・出す・本文のコピーまで一通り試せます。
       </p>
       <p className="muted">
-        実行モード（自分で文を貼ってAIに照合させる形）は、このリポジトリを手元で動かし、自分のClaude APIの鍵を入れると使えます。手順はREADMEにあります。
+        自分で書いた文をAIに照合させる実行モードは、このリポジトリを手元で動かし、自分のClaude APIの鍵を入れると使えます。手順はREADMEにあります。
       </p>
       <p><Link href="/check?case=01" className="button">見本01を開いて試す</Link></p>
     </div>

@@ -3,6 +3,11 @@
 import { DAILY_LIMIT, countKey, jstDate, reserveDaily, checkMinute } from "../lib/limits.ts";
 import { handleJudge, FAILURE_MESSAGE } from "../lib/judge/handler.ts";
 import { isRunModeOpen, RUN_MODE_CLOSED_MESSAGE } from "../lib/runMode.ts";
+import { serializeRecords } from "../lib/samples.ts";
+import { parseRecords } from "../lib/parseRecords.ts";
+import { readFileSync } from "node:fs";
+
+const samples = ["01", "02", "03", "04", "05"].map((i) => JSON.parse(readFileSync(new URL(`../fixtures/case-${i}.json`, import.meta.url), "utf8")));
 
 let problems = 0;
 const expect = (ok, msg) => {
@@ -52,6 +57,7 @@ function deps({ store = fakeStore(), limiter = fakeLimiter(), production = true,
       env: { ANTHROPIC_API_KEY: "test-key-not-real", JUDGE_COUNTS: store, JUDGE_RATE_LIMITER: limiter },
       production,
       runModeOpen,
+      samples,
       now,
       log: quiet,
       judge: async (...args) => {
@@ -211,18 +217,65 @@ for (const [label, env] of [
   expect(isRunModeOpen({ RUN_MODE: "open" }, true) === true, "スイッチ：公開版で RUN_MODE=open は開く");
   expect(isRunModeOpen({ RUN_MODE: "closed" }, false) === true, "スイッチ：手元（npm run dev）は既定で開く");
 
-  // 閉じた時：503、本文を読まない、KVに触れない、1分の上限にも触れない、AIを呼ばない
-  const touched = { store: 0, limiter: 0 };
-  const store = { get: async () => { touched.store++; return null; }, put: async () => { touched.store++; } };
-  const limiter = { limit: async () => { touched.limiter++; return { success: true }; } };
-  const t = deps({ store, limiter, runModeOpen: false });
-  const r = req();
-  const res = await handleJudge(r, t.d);
-  const body = await res.json();
-  expect(res.status === 503 && body.code === "run_mode_closed" && body.message === RUN_MODE_CLOSED_MESSAGE, `閉じた時：503「${body.message}」`);
-  expect(touched.store === 0 && touched.limiter === 0, "閉じた時：KVにも1分の上限にも触れない");
-  expect(t.calls.n === 0, "閉じた時：AIを呼ばない");
-  expect(r.bodyUsed === false, "閉じた時：本文を読まない");
+  // 閉じた時に、KV・1分の上限・AIのどれにも触れないかを数える作り物
+  const watched = (runModeOpen) => {
+    const touched = { store: 0, limiter: 0 };
+    const store = { get: async () => { touched.store++; return null; }, put: async () => { touched.store++; } };
+    const limiter = { limit: async () => { touched.limiter++; return { success: true }; } };
+    return { touched, t: deps({ store, limiter, runModeOpen }) };
+  };
+  // 画面と同じ手順で作る入力：見本の記録を貼り付けの書式にし、parseRecords で読み直す
+  const asPasted = (c, { crlf = false, draft = c.draft } = {}) => {
+    let text = serializeRecords(c.records);
+    if (crlf) text = text.replace(/\n/g, "\r\n").replace(/\r\n/g, "  \r\n");
+    return { records: parseRecords(text), draft };
+  };
+
+  // 閉じた時、見本の文と同じ：保存済みの判定を返す（5組とも）
+  for (const c of samples) {
+    const { touched, t } = watched(false);
+    const res = await handleJudge(req(asPasted(c)), t.d);
+    const body = await res.json();
+    expect(
+      res.status === 200 && body.source === "saved" && JSON.stringify(body.judgements) === JSON.stringify(c.savedJudgements) && body.meta?.model,
+      `閉じた時・見本${c.id}の文：200・保存済みの判定（source=saved）`,
+    );
+    expect(touched.store === 0 && touched.limiter === 0 && t.calls.n === 0, `閉じた時・見本${c.id}の文：KV・1分の上限・AIに触れない`);
+  }
+  {
+    // Windows から貼った（CRLF・行末の空白・下書きの前後の空行）
+    const c = samples[0];
+    const { t } = watched(false);
+    const res = await handleJudge(req(asPasted(c, { crlf: true, draft: `\r\n${c.draft}  \r\n\r\n` })), t.d);
+    expect(res.status === 200 && (await res.json()).source === "saved", "閉じた時・CRLFと余分な空白で貼っても見本と一致する");
+  }
+  {
+    // 1字だけ変えた
+    const c = samples[0];
+    const { touched, t } = watched(false);
+    const res = await handleJudge(req(asPasted(c, { draft: c.draft.replace("浮腫", "むくみ") })), t.d);
+    const body = await res.json();
+    expect(res.status === 503 && body.code === "run_mode_closed" && body.message === RUN_MODE_CLOSED_MESSAGE, `閉じた時・見本と違う文：503「${body.message}」`);
+    expect(touched.store === 0 && touched.limiter === 0 && t.calls.n === 0, "閉じた時・見本と違う文：KV・1分の上限・AIに触れない");
+  }
+  {
+    // 開いていても鍵が無い時（手元で鍵を入れていない）：見本の文なら保存済みを返し、違う文は503（鍵なし）
+    const c = samples[0];
+    const { t } = watched(true);
+    t.d.env.ANTHROPIC_API_KEY = undefined;
+    const r1 = await handleJudge(req(asPasted(c)), t.d);
+    expect(r1.status === 200 && (await r1.json()).source === "saved" && t.calls.n === 0, "開いた時・鍵なし・見本の文：保存済みを返す（AIは呼ばない）");
+    const r2 = await handleJudge(req(asPasted(c, { draft: c.draft.replace("浮腫", "むくみ") })), t.d);
+    expect(r2.status === 503 && (await r2.json()).code === "no_key", "開いた時・鍵なし・見本と違う文：503（鍵なし）");
+  }
+  {
+    // 開いた時は、見本の文でも保存済みを返さず、AIを呼ぶ経路に進む
+    const c = samples[0];
+    const { t } = watched(true);
+    const res = await handleJudge(req(asPasted(c)), t.d);
+    const body = await res.json();
+    expect(res.status === 200 && body.source === "live" && t.calls.n === 1, "開いた時・見本の文：保存済みを返さず、AIを呼ぶ（source=live）");
+  }
   const cross = await handleJudge(req(goodBody, { origin: "https://evil.test" }), deps({ runModeOpen: false }).d);
   expect(cross.status === 403, "閉じた時も、よそのサイトからの送信は先に403");
   // 開けたのに KV が無い時は、今の作りどおり503（limits_unavailable）で止まる

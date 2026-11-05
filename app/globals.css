@@ -178,3 +178,26 @@ h2 { font-size: 1.15rem; margin: 40px 0 12px; padding-bottom: 6px; border-bottom
 .claude-did { margin: 4px 0 8px; font-size: .88rem; }
 .claude-did summary { cursor: pointer; color: var(--accent); }
 .claude-did p { margin: 4px 0; }
+
+/* 手順の画面（11/5 14:25） */
+.step-bar { list-style: none; margin: 8px 0 16px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+.step-bar li { flex: 1 1 120px; min-width: 0; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--card); font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.step-bar li.done { color: var(--fg); }
+.step-bar li.now { border: 2px solid var(--accent); color: var(--fg); font-weight: 600; }
+.step-no { margin-right: 4px; }
+.sample-tools { padding: 8px 12px; background: var(--card); border: 1px dashed var(--muted); border-radius: 6px; }
+.sample-tools p { margin: 0 0 6px; font-size: .9rem; }
+.tool-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.tool-buttons button, .submit-row button, .error-box button, .copy-area button { border: 0; font: inherit; cursor: pointer; }
+.run-form textarea:disabled { opacity: .7; }
+.progress { margin: 0; padding-left: 1.4em; font-size: .92rem; color: var(--muted); }
+.progress li.now { color: var(--fg); font-weight: 600; }
+.progress li.done { color: var(--fg); }
+.result-banner { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); font-size: .92rem; }
+.result-banner.saved { border-left: 4px solid var(--yellow); }
+.result-banner.live { border-left: 4px solid var(--accent); }
+.copy-area { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 8px; }
+.copy-status { font-size: .88rem; color: var(--accent); }
+@media (max-width: 760px) {
+  .step-bar li { flex-basis: 45%; }
+}

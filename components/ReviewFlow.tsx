@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
+import { CopyButton } from "@/components/CopyButton";
 import { JudgementView, tagClass } from "@/components/JudgementView";
 import { jumpTo, sentenceElementId } from "@/lib/jump";
 import { ACTION_LABEL, actionsFor, finalReport, guard, isRed, judgementFor, needsDecision, processedText } from "@/lib/review";
@@ -42,6 +43,7 @@ export function ReviewFlow({
   isSample,
   title,
   header,
+  onViewChange,
 }: {
   records: VisitRecord[];
   sentences: Sentence[];
@@ -50,6 +52,7 @@ export function ReviewFlow({
   isSample: boolean;
   title: string;
   header?: ReactNode; // 照合の画面でだけ出す見出し
+  onViewChange?: (view: "check" | "issue") => void; // 手順の帯に「いまの段」を知らせる
 }) {
   const [decisions, setDecisions] = useState<Record<string, Decision>>({});
   const [view, setView] = useState<"check" | "issue">("check");
@@ -76,6 +79,7 @@ export function ReviewFlow({
     if (!canIssue) return;
     setIssuedAt(new Date().toLocaleString("ja-JP", { dateStyle: "long", timeStyle: "short" }));
     setView("issue");
+    onViewChange?.("issue");
     window.scrollTo(0, 0);
   }
 
@@ -84,7 +88,10 @@ export function ReviewFlow({
       <IssueRecord
         {...{ records, sentences, judgements, decisions, meta, isSample, title, report, issuedAt, creator, reviewer, reviewerRole }}
         yellowPending={g.yellowPending.length}
-        onBack={() => setView("check")}
+        onBack={() => {
+          setView("check");
+          onViewChange?.("check");
+        }}
       />
     );
   }
@@ -117,7 +124,6 @@ export function ReviewFlow({
       </section>
 
       <JudgementView
-        isSample={isSample}
         records={records}
         sentences={sentences}
         judgements={judgements}
@@ -166,6 +172,7 @@ export function ReviewFlow({
         <h2 id="final-title">処理後の報告書</h2>
         <p className="muted">選ぶたびに書き換わります。赤の文が残っている間は、まだ出せません。</p>
         <p className="final-text">{report || "（すべての文を削りました）"}</p>
+        <CopyButton text={report} />
       </section>
 
       <section className="names-box" aria-labelledby="names-title">
@@ -297,6 +304,7 @@ function IssueRecord({
 
       <h2>処理後の報告書</h2>
       <p className="final-text">{report || "（すべての文を削りました）"}</p>
+      <CopyButton text={report} />
 
       {isSample && <p className="sample-badge">架空の見本</p>}
 

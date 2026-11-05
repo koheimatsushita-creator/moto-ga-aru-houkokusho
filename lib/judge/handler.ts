@@ -5,6 +5,7 @@ import { findPii, piiMessage, type PiiHit } from "../pii.ts";
 import { checkMinute, reserveDaily, type CountStore, type RateLimiter } from "../limits.ts";
 import { splitSentences } from "../split.ts";
 import { RUN_MODE_CLOSED_MESSAGE } from "../runMode.ts";
+import { matchSample, type SavedSample } from "../samples.ts";
 import { INPUT_LIMITS, judgeRequestSchema, type JudgeRequest } from "./schema.ts";
 
 export const FAILURE_MESSAGE = "照合できませんでした。入力を短くするか、見本モードをお試しください。AIに届いた後の失敗のため、この回も実行回数に数えます。";
@@ -16,7 +17,15 @@ const reply = (status: number, body: Record<string, unknown>) => Response.json(b
 
 export async function handleJudge(
   request: Request,
-  deps: { env: JudgeBindings; production: boolean; runModeOpen: boolean; judge: JudgeFn; now?: Date; log?: (msg: string, data?: unknown) => void },
+  deps: {
+    env: JudgeBindings;
+    production: boolean;
+    runModeOpen: boolean;
+    samples: SavedSample[]; // 閉じている時に照らし合わせる見本（保存済みの判定つき）
+    judge: JudgeFn;
+    now?: Date;
+    log?: (msg: string, data?: unknown) => void;
+  },
 ): Promise<Response> {
   const log = deps.log ?? ((msg, data) => console.error(msg, data ?? ""));
 
@@ -29,9 +38,6 @@ export async function handleJudge(
   if ((origin && origin !== new URL(request.url).origin) || (site && site !== "same-origin")) {
     return reply(403, { code: "forbidden", message: "この画面以外からの送信は受け付けていません。" });
   }
-
-  // 実行モードが閉じている時：本文を読まず、回数の仕組みにも触れず、AIも呼ばずに止める
-  if (!deps.runModeOpen) return reply(503, { code: "run_mode_closed", message: RUN_MODE_CLOSED_MESSAGE });
 
   // 本文の大きさ：JSONを読む前に見る
   const tooLarge = () => reply(413, { code: "too_large", message: "入力が大きすぎます。訪問記録と下書きを短くしてください。" });
@@ -51,6 +57,14 @@ export async function handleJudge(
   }
   const { records, draft } = parsed.data;
 
+  // 実行モードが閉じている時：見本の文と同じなら保存済みの判定を返し、違えば止める。
+  // どちらも、鍵・回数の仕組み（KV・1分の上限）に触れず、AIも呼ばない
+  if (!deps.runModeOpen) {
+    const sample = matchSample(records, draft, deps.samples);
+    if (sample) return reply(200, { judgements: sample.savedJudgements, meta: sample.savedMeta, source: "saved", sampleId: sample.id });
+    return reply(503, { code: "run_mode_closed", message: RUN_MODE_CLOSED_MESSAGE });
+  }
+
   const recordChars = records.reduce((n, r) => n + r.lines.join("").length, 0);
   if (recordChars + draft.length > INPUT_LIMITS.totalChars) {
     return reply(413, { code: "too_long", message: `訪問記録と下書きは合わせて${INPUT_LIMITS.totalChars.toLocaleString()}字までです。` });
@@ -68,6 +82,9 @@ export async function handleJudge(
 
   const apiKey = deps.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
+    // 鍵が無い手元でも、見本の文なら保存済みの判定で試せるようにする（AIはどのみち呼べない）
+    const sample = matchSample(records, draft, deps.samples);
+    if (sample) return reply(200, { judgements: sample.savedJudgements, meta: sample.savedMeta, source: "saved", sampleId: sample.id });
     return reply(503, { code: "no_key", message: "実行モードはまだ使えません（照合に使う鍵がサーバーに設定されていません）。見本モードは使えます。" });
   }
 
@@ -88,7 +105,7 @@ export async function handleJudge(
 
   try {
     const result = await deps.judge(apiKey, records, draft);
-    return reply(200, result as Record<string, unknown>);
+    return reply(200, { ...(result as Record<string, unknown>), source: "live" });
   } catch (error) {
     // 中身（失敗の理由・トークン数）はログだけに残し、返事には入れない
     const e = error as { message?: string; usage?: unknown };

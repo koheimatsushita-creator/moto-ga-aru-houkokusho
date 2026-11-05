@@ -1,4 +1,4 @@
-import { STAFF_ROLES } from "./roles";
+import { STAFF_ROLES } from "./roles.ts";
 import type { VisitRecord } from "./types";
 
 // 実行モードで貼られた訪問記録を、空行で区切って1件ずつに分け、R01 から番号を付ける。
