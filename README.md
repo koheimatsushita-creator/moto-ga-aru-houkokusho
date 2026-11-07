@@ -2,7 +2,7 @@
 
 訪問看護報告書の**下書きを、訪問記録と1文ずつ見比べて確かめる道具**です。下書きを作る道具ではありません。
 
-公開URL：（公開後に追記）
+公開URL：https://moto-ga-aru-houkokusho.kohei-matsushita.workers.dev
 
 > 架空のデータだけで作った見本です。本物の記録は入れないでください。
 
@@ -10,7 +10,7 @@
 
 ## 審査員の方へ（3分の触り方）
 
-- 公開URL：（公開後に追記）
+- 公開URL：https://moto-ga-aru-houkokusho.kohei-matsushita.workers.dev
 - 動画：https://youtu.be/y82sc8pA0r4（2分9秒・日本語の字幕と声）
 
 1. 入口の「見本01を開いて試す（約3分）」を押す
