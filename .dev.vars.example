@@ -1,0 +1,2 @@
+# 実行モードを手元で試す時だけ、この名前で .dev.vars を作り、自分の Claude API の鍵を入れる（.dev.vars はコミットしない設定）
+ANTHROPIC_API_KEY=
